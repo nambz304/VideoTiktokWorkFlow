@@ -1,13 +1,21 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from database import engine, Base
 from routers import sessions, pipeline, schedule, assets, chat
+from services.asset_manager import AssetManager
+import os
 
 load_dotenv()
-Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Milo Studio API", version="1.0.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.asset_manager = AssetManager(os.getenv("ASSETS_DIR", "../assets"))
+    Base.metadata.create_all(bind=engine)
+    yield
+
+app = FastAPI(title="Milo Studio API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

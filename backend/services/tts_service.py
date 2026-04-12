@@ -22,4 +22,8 @@ class TTSService:
         return output_path
 
     def generate_sync(self, text: str, lang: str, output_path: str) -> str:
-        return asyncio.run(self.generate(text, lang, output_path))
+        loop = asyncio.new_event_loop()
+        try:
+            return loop.run_until_complete(self.generate(text, lang, output_path))
+        finally:
+            loop.close()

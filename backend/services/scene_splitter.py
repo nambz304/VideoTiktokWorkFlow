@@ -1,6 +1,9 @@
 import google.generativeai as genai
 import json, re
 from typing import List
+import logging
+
+logger = logging.getLogger(__name__)
 
 VALID_EMOTIONS = {"happy","wave","question","explain","recommend","cta","sleep","eat","exercise","surprise","think","point"}
 
@@ -18,8 +21,12 @@ Return ONLY a JSON array, no explanation:
 
 Script:
 {script}"""
-        response = self._model.generate_content(prompt)
-        return self._parse_scenes(response.text)
+        try:
+            response = self._model.generate_content(prompt)
+            return self._parse_scenes(response.text)
+        except Exception as e:
+            logger.error(f"Gemini scene split failed: {e}")
+            raise
 
     def _parse_scenes(self, raw: str) -> List[dict]:
         match = re.search(r'\[.*\]', raw, re.DOTALL)

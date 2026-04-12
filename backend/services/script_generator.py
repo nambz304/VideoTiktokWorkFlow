@@ -1,6 +1,9 @@
 import google.generativeai as genai
 from typing import List
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = """Bạn là AI writer cho kênh TikTok "Sống khoẻ cùng AI" với robot mascot tên Milo.
 Viết kịch bản ngắn 30-60 giây, phong cách vui nhộn + thông tin.
@@ -37,8 +40,12 @@ SCRIPT_1:
 SCRIPT_2:
 [kịch bản 2]
 """
-        response = self._model.generate_content(prompt)
-        return self._parse_scripts(response.text)
+        try:
+            response = self._model.generate_content(prompt)
+            return self._parse_scripts(response.text)
+        except Exception as e:
+            logger.error(f"Gemini script generation failed: {e}")
+            raise
 
     def _parse_scripts(self, raw: str) -> List[str]:
         parts = re.split(r'SCRIPT_\d+:', raw)

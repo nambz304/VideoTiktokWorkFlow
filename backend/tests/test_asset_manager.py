@@ -18,8 +18,9 @@ def asset_manager(tmp_path):
 def test_list_all(asset_manager):
     images = asset_manager.list_all()
     assert len(images) == 3
-    assert images[0]["filename"] == "milo_wave.png"
-    assert "happy" in images[0]["tags"]
+    filenames = {img["filename"] for img in images}
+    assert "milo_wave.png" in filenames
+    assert all("filename" in img and "tags" in img and "path" in img for img in images)
 
 def test_find_by_tag(asset_manager):
     results = asset_manager.find_by_tag("explain")

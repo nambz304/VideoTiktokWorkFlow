@@ -19,5 +19,6 @@ def test_generate_creates_file(tts, tmp_path):
         mock_comm.return_value = mock_instance
         mock_instance.save = AsyncMock()
         import asyncio
-        asyncio.run(tts.generate(text="Xin chào", lang="vi", output_path=output_path))
+        result = asyncio.run(tts.generate(text="Xin chào", lang="vi", output_path=output_path))
         mock_instance.save.assert_called_once_with(output_path)
+        assert result == output_path

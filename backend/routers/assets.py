@@ -1,20 +1,11 @@
-from fastapi import APIRouter
-from services.asset_manager import AssetManager
-import os
+from fastapi import APIRouter, Request
+from typing import Optional
 
 router = APIRouter()
-_manager = None
-
-def get_asset_manager() -> AssetManager:
-    global _manager
-    if _manager is None:
-        assets_dir = os.getenv("ASSETS_DIR", "../assets")
-        _manager = AssetManager(assets_dir)
-    return _manager
 
 @router.get("/milo")
-def list_milo_images(tag: str = None):
-    mgr = get_asset_manager()
+def list_milo_images(request: Request, tag: Optional[str] = None):
+    mgr = request.app.state.asset_manager
     if tag:
         return mgr.find_by_tag(tag)
     return mgr.list_all()
