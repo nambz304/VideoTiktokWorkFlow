@@ -48,4 +48,7 @@ def delete_session(session_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{session_id}/scenes", response_model=List[SceneOut])
 def get_scenes(session_id: int, db: Session = Depends(get_db)):
+    session = db.query(SessionModel).filter(SessionModel.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
     return db.query(SceneModel).filter(SceneModel.session_id == session_id).order_by(SceneModel.order).all()

@@ -38,3 +38,7 @@ def test_delete_session(client):
     res = client.delete(f"/sessions/{created['id']}")
     assert res.status_code == 200
     assert client.get(f"/sessions/{created['id']}").status_code == 404
+
+def test_get_scenes_not_found(client):
+    res = client.get("/sessions/99999/scenes")
+    assert res.status_code == 404

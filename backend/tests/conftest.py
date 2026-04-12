@@ -1,11 +1,13 @@
 import pytest
+import pathlib
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database import Base, get_db
 from main import app
 
-TEST_DATABASE_URL = "sqlite:///./test_milo.db"
+_TEST_DIR = pathlib.Path(__file__).parent
+TEST_DATABASE_URL = f"sqlite:///{_TEST_DIR}/test_milo.db"
 engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -22,3 +24,4 @@ def client():
     with TestClient(app) as c:
         yield c
     Base.metadata.drop_all(bind=engine)
+    app.dependency_overrides.clear()

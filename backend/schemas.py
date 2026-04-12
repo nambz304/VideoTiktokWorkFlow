@@ -1,16 +1,16 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, Field
+from typing import Optional, Literal
 from datetime import datetime
 
 class SessionCreate(BaseModel):
     title: str
-    lang: str = "vi"
+    lang: Literal["vi", "en"] = "vi"
 
 class SessionUpdate(BaseModel):
     title: Optional[str] = None
     topic: Optional[str] = None
-    step: Optional[int] = None
-    status: Optional[str] = None
+    step: Optional[int] = Field(None, ge=1, le=6)
+    status: Optional[Literal["draft", "in_progress", "scheduled", "published"]] = None
 
 class SessionOut(BaseModel):
     id: int
