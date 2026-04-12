@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milo Studio — Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0f; color: #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* TOP BAR */
+  .topbar { background: #111827; border-bottom: 1px solid #1f2937; padding: 0.75rem 1.5rem; flex-shrink: 0; }
+  .topbar h1 { font-size: 0.9rem; color: #6ee7b7; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+
+  /* STEPPER */
+  .stepper { display: flex; align-items: center; gap: 0; }
+  .step { display: flex; align-items: center; gap: 0.4rem; flex: 1; position: relative; }
+  .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; border: 2px solid #374151; background: #1f2937; color: #6b7280; transition: all 0.2s; cursor: pointer; }
+  .step.done .step-dot { background: #065f46; border-color: #6ee7b7; color: #6ee7b7; }
+  .step.active .step-dot { background: #1d4ed8; border-color: #60a5fa; color: #fff; box-shadow: 0 0 12px #3b82f640; }
+  .step-label { font-size: 0.65rem; color: #6b7280; white-space: nowrap; }
+  .step.done .step-label { color: #6ee7b7; }
+  .step.active .step-label { color: #93c5fd; font-weight: 600; }
+  .step-line { height: 2px; flex: 1; background: #1f2937; margin: 0 0.3rem; }
+  .step-line.done { background: #065f46; }
+
+  /* MAIN AREA */
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  /* CONTENT PANEL */
+  .content-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .step-area { flex: 1; padding: 1.25rem 1.5rem; overflow-y: auto; }
+  .step-area h2 { font-size: 1rem; color: #f3f4f6; margin-bottom: 0.3rem; }
+  .step-area .subtitle { font-size: 0.78rem; color: #6b7280; margin-bottom: 1rem; }
+
+  /* SCENE CARDS */
+  .scene-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+  .scene-card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
+  .scene-card:hover { border-color: #374151; }
+  .scene-card.approved { border-color: #059669; }
+  .scene-card.rejected { border-color: #dc2626; opacity: 0.5; }
+  .scene-img { width: 100%; height: 110px; background: linear-gradient(135deg, #1e3a5f, #2d1b69); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+  .scene-body { padding: 0.6rem; }
+  .scene-body p { font-size: 0.7rem; color: #9ca3af; line-height: 1.4; margin-bottom: 0.5rem; }
+  .scene-actions { display: flex; gap: 0.4rem; }
+  .btn-sm { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 5px; border: none; cursor: pointer; font-weight: 600; }
+  .btn-ok { background: #065f46; color: #6ee7b7; }
+  .btn-ok:hover { background: #047857; }
+  .btn-redo { background: #450a0a; color: #fca5a5; }
+  .btn-redo:hover { background: #7f1d1d; }
+  .scene-num { font-size: 0.6rem; color: #4b5563; font-weight: 700; margin-bottom: 0.3rem; letter-spacing: 0.05em; }
+
+  /* NAV */
+  .nav-bar { background: #111827; border-top: 1px solid #1f2937; padding: 0.6rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+  .btn-nav { padding: 0.4rem 1rem; border-radius: 7px; border: 1px solid #374151; background: #1f2937; color: #d1d5db; font-size: 0.8rem; cursor: pointer; transition: all 0.15s; }
+  .btn-nav:hover { background: #374151; }
+  .btn-primary { background: #1d4ed8; border-color: #3b82f6; color: #fff; }
+  .btn-primary:hover { background: #2563eb; }
+  .spacer { flex: 1; }
+  .step-indicator { font-size: 0.75rem; color: #6b7280; }
+
+  /* CHAT SIDEBAR */
+  .chat-sidebar { width: 300px; background: #0d1117; border-left: 1px solid #1f2937; display: flex; flex-direction: column; flex-shrink: 0; }
+  .chat-header { padding: 0.75rem 1rem; border-bottom: 1px solid #1f2937; font-size: 0.8rem; color: #6ee7b7; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+  .chat-dot { width: 6px; height: 6px; border-radius: 50%; background: #6ee7b7; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.6rem; }
+  .msg { max-width: 90%; }
+  .msg.user { align-self: flex-end; }
+  .msg.ai { align-self: flex-start; }
+  .msg-bubble { padding: 0.5rem 0.75rem; border-radius: 10px; font-size: 0.75rem; line-height: 1.5; }
+  .msg.user .msg-bubble { background: #1d4ed8; color: #dbeafe; border-bottom-right-radius: 3px; }
+  .msg.ai .msg-bubble { background: #1f2937; color: #d1d5db; border-bottom-left-radius: 3px; }
+  .msg-time { font-size: 0.6rem; color: #4b5563; margin-top: 0.2rem; padding: 0 0.2rem; }
+  .msg.user .msg-time { text-align: right; }
+  .chat-input-area { padding: 0.75rem; border-top: 1px solid #1f2937; }
+  .chat-input-row { display: flex; gap: 0.4rem; align-items: flex-end; }
+  .chat-input { flex: 1; background: #1f2937; border: 1px solid #374151; border-radius: 8px; padding: 0.5rem 0.75rem; color: #e5e7eb; font-size: 0.75rem; resize: none; outline: none; min-height: 36px; max-height: 80px; }
+  .chat-input:focus { border-color: #3b82f6; }
+  .btn-send { width: 32px; height: 32px; background: #1d4ed8; border: none; border-radius: 7px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .btn-send:hover { background: #2563eb; }
+  .chat-hint { font-size: 0.62rem; color: #4b5563; margin-top: 0.4rem; }
+  .badge { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.6rem; font-weight: 700; margin-left: 0.3rem; }
+  .badge-green { background: #065f46; color: #6ee7b7; }
+  .badge-yellow { background: #78350f; color: #fcd34d; }
+</style>
+</head>
+<body>
+
+<!-- TOP: STEPPER -->
+<div class="topbar">
+  <h1>🤖 MILO STUDIO</h1>
+  <div class="stepper">
+    <div class="step done" title="Kịch bản">
+      <div class="step-dot">✓</div>
+      <div class="step-label">Kịch bản</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step done" title="Phân cảnh">
+      <div class="step-dot">✓</div>
+      <div class="step-label">Phân cảnh</div>
+    </div>
+    <div class="step-line done"></div>
+    <div class="step active" title="Chọn ảnh">
+      <div class="step-dot">3</div>
+      <div class="step-label">Chọn ảnh <span class="badge badge-yellow">đang ở đây</span></div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" title="Tạo video cảnh">
+      <div class="step-dot">4</div>
+      <div class="step-label">Video cảnh</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" title="Ghép video">
+      <div class="step-dot">5</div>
+      <div class="step-label">Ghép video</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" title="Xuất & Đăng">
+      <div class="step-dot">6</div>
+      <div class="step-label">Xuất & Đăng</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- CONTENT -->
+  <div class="content-panel">
+    <div class="step-area">
+      <h2>Bước 3 — Chọn ảnh Milo cho từng cảnh</h2>
+      <p class="subtitle">AI đã đề xuất ảnh phù hợp từ thư viện. Review và approve từng cảnh trước khi tạo video.</p>
+
+      <div class="scene-grid">
+        <div class="scene-card approved">
+          <div class="scene-img">🤖👋</div>
+          <div class="scene-body">
+            <div class="scene-num">CẢNH 1 · 0:00–0:04 <span class="badge badge-green">✓ OK</span></div>
+            <p>Milo chào khán giả, giới thiệu chủ đề hôm nay là ngủ đủ giấc.</p>
+            <div class="scene-actions">
+              <button class="btn-sm btn-ok">✓ OK</button>
+              <button class="btn-sm btn-redo">↻ Chọn lại</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-card approved">
+          <div class="scene-img">🤖😴</div>
+          <div class="scene-body">
+            <div class="scene-num">CẢNH 2 · 0:04–0:10 <span class="badge badge-green">✓ OK</span></div>
+            <p>Milo giải thích tác hại của thiếu ngủ với não bộ và cơ thể.</p>
+            <div class="scene-actions">
+              <button class="btn-sm btn-ok">✓ OK</button>
+              <button class="btn-sm btn-redo">↻ Chọn lại</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-card">
+          <div class="scene-img">🤖💡</div>
+          <div class="scene-body">
+            <div class="scene-num">CẢNH 3 · 0:10–0:18</div>
+            <p>Milo đưa ra 3 mẹo cải thiện chất lượng giấc ngủ đơn giản.</p>
+            <div class="scene-actions">
+              <button class="btn-sm btn-ok">✓ OK</button>
+              <button class="btn-sm btn-redo">↻ Chọn lại</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-card">
+          <div class="scene-img">🤖🛒</div>
+          <div class="scene-body">
+            <div class="scene-num">CẢNH 4 · 0:18–0:25</div>
+            <p>Milo giới thiệu sản phẩm affiliate — gối massage thông minh.</p>
+            <div class="scene-actions">
+              <button class="btn-sm btn-ok">✓ OK</button>
+              <button class="btn-sm btn-redo">↻ Chọn lại</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-card">
+          <div class="scene-img">🤖🙏</div>
+          <div class="scene-body">
+            <div class="scene-num">CẢNH 5 · 0:25–0:30</div>
+            <p>Milo kêu gọi follow, để lại bình luận câu hỏi sức khoẻ.</p>
+            <div class="scene-actions">
+              <button class="btn-sm btn-ok">✓ OK</button>
+              <button class="btn-sm btn-redo">↻ Chọn lại</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAV BAR -->
+    <div class="nav-bar">
+      <button class="btn-nav">← Bước trước</button>
+      <span class="step-indicator">Bước 3 / 6 · 2/5 cảnh đã approve</span>
+      <div class="spacer"></div>
+      <button class="btn-nav btn-primary">Tiếp theo →</button>
+    </div>
+  </div>
+
+  <!-- CHAT SIDEBAR -->
+  <div class="chat-sidebar">
+    <div class="chat-header">
+      <div class="chat-dot"></div>
+      Milo AI Assistant
+    </div>
+    <div class="chat-messages">
+      <div class="msg ai">
+        <div class="msg-bubble">Tôi đã chọn ảnh phù hợp nhất cho 5 cảnh dựa theo kịch bản. Cảnh 1 và 2 bạn đã approve rồi. Cảnh 3–5 đang chờ review nhé!</div>
+        <div class="msg-time">14:32</div>
+      </div>
+      <div class="msg user">
+        <div class="msg-bubble">cảnh 4 đổi sang ảnh Milo cầm sản phẩm lên được không</div>
+        <div class="msg-time">14:33</div>
+      </div>
+      <div class="msg ai">
+        <div class="msg-bubble">OK, tôi tìm trong thư viện Milo... Có 3 ảnh Milo cầm vật phẩm, bạn muốn xem để chọn không?</div>
+        <div class="msg-time">14:33</div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <div class="chat-input-row">
+        <textarea class="chat-input" placeholder="Ra lệnh, hỏi, hoặc thảo luận về output..." rows="1"></textarea>
+        <button class="btn-send">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="chat-hint">VD: "làm lại cảnh 3" · "thêm text overlay" · "giải thích tại sao chọn ảnh này"</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

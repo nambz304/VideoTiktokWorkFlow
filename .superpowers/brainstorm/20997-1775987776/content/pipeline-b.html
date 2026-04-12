@@ -1,0 +1,94 @@
+<h2>Pipeline B — Local + Free Cloud GPU</h2>
+<p class="subtitle">~$0/tháng · 7+ vid/tuần · VI+EN · Milo mascot consistent</p>
+
+<div class="section">
+  <h3>Kiến trúc tổng quan</h3>
+  <div style="background:#111827;border-radius:12px;padding:1.5rem;font-family:monospace;font-size:0.85rem;line-height:2;color:#e5e7eb">
+    <span style="color:#6ee7b7">[ TRIGGER ]</span> Cron hàng ngày<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+    <span style="color:#93c5fd">[ 1. IDEA ]</span> Google Trends scraper + LLM script gen <span style="color:#9ca3af">(local CPU / Gemini free)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+    <span style="color:#c4b5fd">[ 2. TTS ]</span> Edge-TTS → audio VI hoặc EN <span style="color:#9ca3af">(local, $0)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+    <span style="color:#fbbf24">[ 3. IMAGE ]</span> Milo image library <span style="color:#9ca3af">(pre-generated trên Colab/Kaggle, SD+LoRA)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+    <span style="color:#f87171">[ 4. VIDEO ]</span> FFmpeg ken-burns + subtitle burn-in <span style="color:#9ca3af">(local CPU)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hoặc LivePortrait lip-sync <span style="color:#9ca3af">(Colab khi cần)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+    <span style="color:#34d399">[ 5. PUBLISH ]</span> TikTok API auto-schedule <span style="color:#9ca3af">($0)</span>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Chi tiết từng node</h3>
+  <div class="options" data-multiselect>
+
+    <div class="option" data-choice="1" onclick="toggleSelect(this)">
+      <div class="letter" style="background:#6ee7b7;color:#111">1</div>
+      <div class="content">
+        <h3>Idea + Script</h3>
+        <p><strong>Tool:</strong> Gemini 2.0 Flash API (free tier 1500 req/ngày) hoặc Ollama Qwen2.5-7B (CPU)</p>
+        <p><strong>Input:</strong> Google Trends VI/EN + topic seed file</p>
+        <p><strong>Output:</strong> Script có hook, nội dung, CTA affiliate, hashtag</p>
+        <p><strong>Cost:</strong> $0</p>
+      </div>
+    </div>
+
+    <div class="option" data-choice="2" onclick="toggleSelect(this)">
+      <div class="letter" style="background:#93c5fd;color:#111">2</div>
+      <div class="content">
+        <h3>TTS Voice (Milo nói)</h3>
+        <p><strong>Tool:</strong> Edge-TTS (Microsoft, miễn phí hoàn toàn)</p>
+        <p><strong>VI:</strong> vi-VN-NamMinhNeural (giọng nam, nghe tốt)</p>
+        <p><strong>EN:</strong> en-US-GuyNeural hoặc en-US-AriaNeural</p>
+        <p><strong>Cost:</strong> $0</p>
+      </div>
+    </div>
+
+    <div class="option" data-choice="3" onclick="toggleSelect(this)">
+      <div class="letter" style="background:#c4b5fd;color:#111">3</div>
+      <div class="content">
+        <h3>Milo Image Library</h3>
+        <p><strong>Tool:</strong> ComfyUI + Stable Diffusion XL + LoRA Milo trên <strong>Google Colab</strong> (free T4)</p>
+        <p><strong>Workflow:</strong> Batch generate 50-100 pose/expression Milo mỗi tuần, lưu local</p>
+        <p><strong>Kaggle:</strong> Backup 30h GPU/tuần miễn phí</p>
+        <p><strong>Cost:</strong> $0 (chỉ cần run 1-2h/tuần)</p>
+      </div>
+    </div>
+
+    <div class="option" data-choice="4" onclick="toggleSelect(this)">
+      <div class="letter" style="background:#fbbf24;color:#111">4</div>
+      <div class="content">
+        <h3>Video Assembly</h3>
+        <p><strong>Tool:</strong> FFmpeg + Python (local)</p>
+        <p><strong>Technique:</strong> Ken Burns effect (zoom/pan trên ảnh tĩnh → trông như motion)</p>
+        <p><strong>Subtitle:</strong> Whisper transcribe → burn-in caption tự động (TikTok style)</p>
+        <p><strong>Background music:</strong> Pixabay/FreeSound API</p>
+        <p><strong>Lip-sync (optional):</strong> LivePortrait trên Colab</p>
+        <p><strong>Cost:</strong> $0</p>
+      </div>
+    </div>
+
+    <div class="option" data-choice="5" onclick="toggleSelect(this)">
+      <div class="letter" style="background:#34d399;color:#111">5</div>
+      <div class="content">
+        <h3>Auto-Publish + Schedule</h3>
+        <p><strong>Tool:</strong> TikTok Content Posting API (miễn phí)</p>
+        <p><strong>Orchestration:</strong> n8n self-hosted <strong>hoặc</strong> Python APScheduler</p>
+        <p><strong>Metadata:</strong> Auto-generate caption VI/EN + hashtag + link affiliate</p>
+        <p><strong>Cost:</strong> $0</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section">
+  <h3>Tổng chi phí</h3>
+  <div style="background:#052e16;border:1px solid #16a34a;border-radius:8px;padding:1rem;color:#86efac">
+    <strong>$0/tháng</strong> — 100% free tools<br>
+    <small style="color:#6ee7b7">Điện máy tính ~$2-5/tháng nếu chạy 24/7 (optional)</small>
+  </div>
+</div>
+
+<p class="subtitle">Click từng node để xem chi tiết. Feedback ở terminal.</p>
