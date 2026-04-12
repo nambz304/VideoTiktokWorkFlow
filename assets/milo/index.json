@@ -1,0 +1,11 @@
+{
+  "milo_wave.png": ["happy", "wave", "greeting"],
+  "milo_think.png": ["think", "question", "curious"],
+  "milo_point.png": ["explain", "point", "teach"],
+  "milo_happy.png": ["happy", "excited", "positive"],
+  "milo_sleep.png": ["sleep", "tired", "rest"],
+  "milo_eat.png": ["eat", "food", "nutrition"],
+  "milo_exercise.png": ["exercise", "workout", "health"],
+  "milo_hold_product.png": ["recommend", "product", "affiliate"],
+  "milo_cta.png": ["cta", "follow", "subscribe"]
+}
