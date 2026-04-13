@@ -120,3 +120,23 @@ def test_fallback_dialogue_uses_action(monkeypatch):
     monkeypatch.setattr(splitter._client.messages, "create", lambda **kw: mock_response(bad_response))
     scenes = splitter.split(SAMPLE_SCRIPT)
     assert scenes[0]["dialogue"] == "Milo nhảy"
+
+
+def test_first_scene_forced_to_hook_even_if_wrong(monkeypatch):
+    """LLM returns wrong act for first scene → code corrects to hook"""
+    wrong_response = '[{"order":1,"act":"main","action":"Milo nhảy","dialogue":"Xin chào!","emotion":"happy"},' \
+                     '{"order":2,"act":"cta","action":"Milo vẫy","dialogue":"Bye!","emotion":"wave"}]'
+    splitter = make_splitter()
+    monkeypatch.setattr(splitter._client.messages, "create", lambda **kw: mock_response(wrong_response))
+    scenes = splitter.split(SAMPLE_SCRIPT)
+    assert scenes[0]["act"] == "hook"
+
+
+def test_last_scene_forced_to_cta_even_if_wrong(monkeypatch):
+    """LLM returns wrong act for last scene → code corrects to cta"""
+    wrong_response = '[{"order":1,"act":"hook","action":"Milo nhảy","dialogue":"Xin chào!","emotion":"surprise"},' \
+                     '{"order":2,"act":"main","action":"Milo vẫy","dialogue":"Bye!","emotion":"wave"}]'
+    splitter = make_splitter()
+    monkeypatch.setattr(splitter._client.messages, "create", lambda **kw: mock_response(wrong_response))
+    scenes = splitter.split(SAMPLE_SCRIPT)
+    assert scenes[-1]["act"] == "cta"

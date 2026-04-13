@@ -56,7 +56,13 @@ Kịch bản:
             return [self._fallback_scene(original_script)]
         try:
             scenes = json.loads(match.group())
-            return [self._validate_scene(s) for s in scenes]
+            scenes = [self._validate_scene(s) for s in scenes]
+            # Enforce structural act rules regardless of LLM output
+            if scenes:
+                scenes[0]["act"] = "hook"
+                if len(scenes) > 1:
+                    scenes[-1]["act"] = "cta"
+            return scenes
         except json.JSONDecodeError:
             return [self._fallback_scene(original_script)]
 
