@@ -51,3 +51,13 @@ export interface ChatMessage {
   text: string;
   timestamp: number;
 }
+
+export interface Character {
+  id: number
+  name: string
+  personality: string | null
+  char_description: string | null
+  ref_image_count: number
+  fal_ready: boolean
+  created_at: string | null
+}

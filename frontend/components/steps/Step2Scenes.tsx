@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { splitScenes } from "@/lib/api";
 import NavBar from "@/components/NavBar";
-import type { Session, Scene } from "@/lib/types";
+import CharacterManager from "@/components/CharacterManager";
+import type { Session, Scene, Character } from "@/lib/types";
 
 export default function Step2Scenes({
   session, onAdvance, onBack,
@@ -11,12 +12,13 @@ export default function Step2Scenes({
   const [loading, setLoading] = useState(false);
   const [scriptInput, setScriptInput] = useState("");
   const [generated, setGenerated] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
 
   async function handleGenerate() {
     if (!scriptInput.trim()) return;
     setLoading(true);
     try {
-      const data = await splitScenes(session.id, scriptInput);
+      const data = await splitScenes(session.id, scriptInput, selectedCharacter?.id);
       setScenes(data.scenes);
       setGenerated(true);
     } finally {
@@ -33,6 +35,13 @@ export default function Step2Scenes({
       <div className="flex-1 overflow-y-auto p-6">
         <h2 className="text-base font-semibold text-gray-100 mb-1">Bước 2 — Phân cảnh</h2>
         <p className="text-sm text-gray-500 mb-5">Paste kịch bản đã chọn để phân thành các cảnh.</p>
+
+        <div className="mb-6">
+          <CharacterManager
+            selectedId={selectedCharacter?.id ?? null}
+            onSelect={setSelectedCharacter}
+          />
+        </div>
 
         {!generated ? (
           <div>

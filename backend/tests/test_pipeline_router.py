@@ -38,7 +38,8 @@ def test_step2_scenes(client):
 
 
 def test_chat_endpoint(client):
-    with patch("services.chat_handler.ChatHandler.chat", return_value="OK tôi hiểu rồi!"):
+    with patch("routers.chat.ClaudeHandler") as MockHandler:
+        MockHandler.return_value.chat.return_value = "OK tôi hiểu rồi!"
         session = client.post("/sessions", json={"title": "Test", "lang": "vi"}).json()
         res = client.post("/chat", json={
             "session_id": session["id"],
