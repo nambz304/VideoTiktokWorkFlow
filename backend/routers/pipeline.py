@@ -167,7 +167,8 @@ def step_4_scene_video(
         output_dir, "audio", f"session_{session_id}_scene_{scene_id}.mp3"
     )
     tts = _get_tts()
-    tts.generate_sync(text=scene.script_text, lang=session.lang, output_path=audio_path)
+    tts_text = scene.dialogue or scene.script_text
+    tts.generate_sync(text=tts_text, lang=session.lang, output_path=audio_path)
     video_path = os.path.join(
         output_dir, "scenes", f"session_{session_id}_scene_{scene_id}.mp4"
     )
