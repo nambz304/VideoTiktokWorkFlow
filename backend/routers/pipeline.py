@@ -98,8 +98,11 @@ def step_2_scenes(session_id: int, body: dict, db: DBSession = Depends(get_db)):
         scene = SceneModel(
             session_id=session_id,
             order=s["order"],
-            script_text=s["text"],
-            emotion_tag=s["emotion"],
+            script_text=s.get("action", s.get("text", "")),  # backward compat
+            emotion_tag=s.get("emotion", "explain"),
+            act=s.get("act"),
+            action=s.get("action"),
+            dialogue=s.get("dialogue"),
         )
         db.add(scene)
         scene_objs.append(scene)
@@ -112,6 +115,9 @@ def step_2_scenes(session_id: int, body: dict, db: DBSession = Depends(get_db)):
             {
                 "id": s.id,
                 "order": s.order,
+                "act": s.act,
+                "action": s.action,
+                "dialogue": s.dialogue,
                 "script_text": s.script_text,
                 "emotion_tag": s.emotion_tag,
             }
