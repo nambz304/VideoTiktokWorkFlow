@@ -24,6 +24,9 @@ class SceneModel(Base):
     order = Column(Integer, nullable=False)
     script_text = Column(Text, nullable=False)
     emotion_tag = Column(String(50), nullable=True)
+    act = Column(String(20), nullable=True)    # "hook" | "main" | "cta"
+    action = Column(Text, nullable=True)       # Milo action description → image gen prompt
+    dialogue = Column(Text, nullable=True)     # Milo spoken words → TTS
     image_path = Column(String(500), nullable=True)
     audio_path = Column(String(500), nullable=True)
     video_path = Column(String(500), nullable=True)
