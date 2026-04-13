@@ -4,13 +4,13 @@ import os
 
 class VideoMerger:
     def __init__(self, output_dir: str):
-        self.output_dir = output_dir
-        os.makedirs(output_dir, exist_ok=True)
+        self.output_dir = os.path.abspath(output_dir)
+        os.makedirs(self.output_dir, exist_ok=True)
 
     def _create_concat_file(self, clip_paths: list, concat_path: str) -> str:
         with open(concat_path, "w") as f:
             for path in clip_paths:
-                f.write(f"file '{path}'\n")
+                f.write(f"file '{os.path.abspath(path)}'\n")
         return concat_path
 
     def merge(
@@ -37,21 +37,23 @@ class VideoMerger:
             capture_output=True,
         )
 
-        # Step 2: mix background music
-        subprocess.run(
-            [
-                "ffmpeg", "-y",
-                "-i", temp_out,
-                "-stream_loop", "-1", "-i", bgm_path,
-                "-filter_complex",
-                f"[1:a]volume={bgm_volume}[bgm];[0:a][bgm]amix=inputs=2:duration=first[aout]",
-                "-map", "0:v", "-map", "[aout]",
-                "-c:v", "copy", "-c:a", "aac", "-shortest",
-                output_path,
-            ],
-            check=True,
-            capture_output=True,
-        )
-
-        os.remove(temp_out)
+        # Step 2: mix background music (skip if no bgm)
+        if bgm_path:
+            subprocess.run(
+                [
+                    "ffmpeg", "-y",
+                    "-i", temp_out,
+                    "-stream_loop", "-1", "-i", bgm_path,
+                    "-filter_complex",
+                    f"[1:a]volume={bgm_volume}[bgm];[0:a][bgm]amix=inputs=2:duration=first[aout]",
+                    "-map", "0:v", "-map", "[aout]",
+                    "-c:v", "copy", "-c:a", "aac", "-shortest",
+                    output_path,
+                ],
+                check=True,
+                capture_output=True,
+            )
+            os.remove(temp_out)
+        else:
+            os.rename(temp_out, output_path)
         return output_path

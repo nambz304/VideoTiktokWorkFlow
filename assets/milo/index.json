@@ -7,5 +7,6 @@
   "milo_eat.png": ["eat", "food", "nutrition"],
   "milo_exercise.png": ["exercise", "workout", "health"],
   "milo_hold_product.png": ["recommend", "product", "affiliate"],
-  "milo_cta.png": ["cta", "follow", "subscribe"]
+  "milo_cta.png": ["cta", "follow", "subscribe"],
+  "milo_surprise.png": ["surprise", "shocked", "wow"]
 }

@@ -10,13 +10,13 @@ class AssetManager:
 
     def list_all(self) -> List[dict]:
         return [
-            {"filename": name, "tags": tags, "path": os.path.join(self.milo_dir, name)}
+            {"filename": name, "tags": tags, "path": os.path.join(self.milo_dir, name), "url": f"/static/milo/{name}"}
             for name, tags in self._index.items()
         ]
 
     def find_by_tag(self, tag: str) -> List[dict]:
         return [
-            {"filename": name, "tags": tags, "path": os.path.join(self.milo_dir, name)}
+            {"filename": name, "tags": tags, "path": os.path.join(self.milo_dir, name), "url": f"/static/milo/{name}"}
             for name, tags in self._index.items()
             if tag in tags
         ]

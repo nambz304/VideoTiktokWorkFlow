@@ -1,4 +1,4 @@
-import google.generativeai as genai
+import anthropic
 from typing import List
 import re
 import logging
@@ -12,11 +12,7 @@ Cấu trúc: Hook mạnh (3-5 giây) → Nội dung chính → CTA affiliate t�
 
 class ScriptGenerator:
     def __init__(self, api_key: str):
-        genai.configure(api_key=api_key)
-        self._model = genai.GenerativeModel(
-            "gemini-2.0-flash",
-            system_instruction=SYSTEM_PROMPT
-        )
+        self._client = anthropic.Anthropic(api_key=api_key)
 
     def generate_scripts(
         self,
@@ -41,12 +37,21 @@ SCRIPT_2:
 [kịch bản 2]
 """
         try:
-            response = self._model.generate_content(prompt)
-            return self._parse_scripts(response.text)
+            response = self._client.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=2048,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            return self._parse_scripts(response.content[0].text)
         except Exception as e:
-            logger.error(f"Gemini script generation failed: {e}")
+            logger.error(f"Claude script generation failed: {e}")
             raise
 
     def _parse_scripts(self, raw: str) -> List[str]:
-        parts = re.split(r'SCRIPT_\d+:', raw)
+        # Drop text before first SCRIPT_N: marker, then split on remaining markers
+        match = re.search(r'SCRIPT_\d+:', raw)
+        if not match:
+            return [raw.strip()] if raw.strip() else []
+        parts = re.split(r'SCRIPT_\d+:', raw[match.start():])
         return [p.strip() for p in parts if p.strip()]

@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from database import engine, Base
 from routers import sessions, pipeline, schedule, assets, chat
@@ -30,6 +31,8 @@ app.include_router(pipeline.router, prefix="/sessions", tags=["pipeline"])
 app.include_router(schedule.router, prefix="/schedule", tags=["schedule"])
 app.include_router(assets.router, prefix="/assets", tags=["assets"])
 app.include_router(chat.router, prefix="/chat", tags=["chat"])
+
+app.mount("/static", StaticFiles(directory=os.getenv("ASSETS_DIR", "../assets")), name="static")
 
 @app.get("/health")
 def health():

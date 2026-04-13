@@ -1,0 +1,120 @@
+<h2>Chọn AI Image Gen service</h2>
+<p class="subtitle">Budget: max $0.04/ảnh • Cần: vertical 9:16 • Style: background đẹp cho TikTok health/AI</p>
+
+<div class="cards" style="grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+
+  <!-- Replicate FLUX -->
+  <div class="card" data-choice="flux-replicate" onclick="toggleSelect(this)" style="border: 2px solid rgba(99,102,241,0.4);">
+    <div class="card-image" style="padding: 16px; background: linear-gradient(135deg, #1e1b4b, #312e81);">
+      <div style="text-align:center;">
+        <div style="font-size: 36px; margin-bottom: 8px;">⚡</div>
+        <div style="font-size: 18px; font-weight: 900; color: #a5b4fc; letter-spacing: 1px;">FLUX.1</div>
+        <div style="font-size: 11px; color: #818cf8; margin-top: 2px;">via Replicate</div>
+      </div>
+      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 6px;">
+        <div style="background: rgba(99,102,241,0.2); border-radius: 6px; padding: 6px 10px; font-size: 11px;">
+          <span style="color: #a5b4fc;">schnell</span> — $0.003/img · ~2s
+        </div>
+        <div style="background: rgba(99,102,241,0.2); border-radius: 6px; padding: 6px 10px; font-size: 11px;">
+          <span style="color: #a5b4fc;">dev</span> — $0.025/img · ~5s
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>⭐ FLUX — Replicate <span style="background:rgba(99,102,241,0.2);color:#a5b4fc;border-radius:8px;padding:1px 6px;font-size:10px;margin-left:4px;">RECOMMENDED</span></h3>
+      <p>State-of-the-art 2024-2025. Prompt adherence tốt nhất hiện tại, hơn cả DALL-E 3. Hỗ trợ 9:16 native. API đơn giản.</p>
+      <div style="margin-top: 8px; font-size: 11px; color: #6b7280; line-height: 1.6;">
+        Prompt ví dụ:<br>
+        <em style="color: #9ca3af;">"minimalist health clinic interior, soft morning light, bokeh background, clean aesthetic, 9:16 vertical, no people"</em>
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;">
+        <span style="background:rgba(76,175,80,0.15);color:#4caf50;border-radius:12px;padding:2px 8px;font-size:10px;">Rẻ nhất</span>
+        <span style="background:rgba(99,102,241,0.15);color:#818cf8;border-radius:12px;padding:2px 8px;font-size:10px;">Chất lượng cao nhất</span>
+        <span style="background:rgba(33,150,243,0.15);color:#2196f3;border-radius:12px;padding:2px 8px;font-size:10px;">Fast API</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DALL-E 3 -->
+  <div class="card" data-choice="dalle3" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: linear-gradient(135deg, #064e3b, #065f46);">
+      <div style="text-align:center;">
+        <div style="font-size: 36px; margin-bottom: 8px;">🟢</div>
+        <div style="font-size: 18px; font-weight: 900; color: #6ee7b7; letter-spacing: 1px;">DALL-E 3</div>
+        <div style="font-size: 11px; color: #34d399; margin-top: 2px;">via OpenAI API</div>
+      </div>
+      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 6px;">
+        <div style="background: rgba(16,185,129,0.15); border-radius: 6px; padding: 6px 10px; font-size: 11px;">
+          <span style="color: #6ee7b7;">standard</span> — $0.04/img · ~6s
+        </div>
+        <div style="background: rgba(16,185,129,0.15); border-radius: 6px; padding: 6px 10px; font-size: 11px;">
+          <span style="color: #6ee7b7;">HD</span> — $0.08/img · ~10s
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>DALL-E 3 — OpenAI</h3>
+      <p>Prompt understanding xuất sắc, output clean. Đúng budget ($0.04/img standard). Tuy nhiên chỉ hỗ trợ 1024×1792 cho portrait, không native 1080×1920.</p>
+      <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">
+        ⚠ Cần crop/resize từ 1024×1792 → 1080×1920
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;">
+        <span style="background:rgba(255,152,0,0.15);color:#ff9800;border-radius:12px;padding:2px 8px;font-size:10px;">Đắt hơn FLUX</span>
+        <span style="background:rgba(76,175,80,0.15);color:#4caf50;border-radius:12px;padding:2px 8px;font-size:10px;">Quen thuộc</span>
+        <span style="background:rgba(33,150,243,0.15);color:#2196f3;border-radius:12px;padding:2px 8px;font-size:10px;">Stable API</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- fal.ai FLUX -->
+  <div class="card" data-choice="fal-flux" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: linear-gradient(135deg, #1c1917, #292524);">
+      <div style="text-align:center;">
+        <div style="font-size: 36px; margin-bottom: 8px;">🔥</div>
+        <div style="font-size: 18px; font-weight: 900; color: #fbbf24; letter-spacing: 1px;">FLUX</div>
+        <div style="font-size: 11px; color: #f59e0b; margin-top: 2px;">via fal.ai</div>
+      </div>
+      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 6px;">
+        <div style="background: rgba(251,191,36,0.1); border-radius: 6px; padding: 6px 10px; font-size: 11px;">
+          <span style="color: #fbbf24;">schnell</span> — $0.003/img · ~1s
+        </div>
+        <div style="background: rgba(251,191,36,0.1); border-radius: 6px; padding: 6px 10px; font-size: 11px;">
+          <span style="color: #fbbf24;">dev</span> — $0.025/img · ~3s
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>FLUX — fal.ai</h3>
+      <p>Cùng model FLUX nhưng nhanh hơn Replicate (~1s). fal.ai chuyên về inference tốc độ cao. API đơn giản tương đương.</p>
+      <div style="margin-top: 8px; font-size: 11px; color: #6b7280;">
+        Alternative nếu Replicate có latency cao. Tương đương về chất lượng.
+      </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;">
+        <span style="background:rgba(76,175,80,0.15);color:#4caf50;border-radius:12px;padding:2px 8px;font-size:10px;">Nhanh nhất</span>
+        <span style="background:rgba(251,191,36,0.15);color:#f59e0b;border-radius:12px;padding:2px 8px;font-size:10px;">Rẻ</span>
+        <span style="background:rgba(156,39,176,0.15);color:#9c27b0;border-radius:12px;padding:2px 8px;font-size:10px;">Ít phổ biến hơn</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top: 24px; padding: 16px; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.3); border-radius: 8px;">
+  <div class="label" style="color: #a5b4fc; margin-bottom: 10px;">Tại sao FLUX qua Replicate?</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; color: #9ca3af; line-height: 1.6;">
+    <div>
+      ✓ FLUX.1-schnell: $0.003 × 8 cảnh = <strong style="color:#a5b4fc;">$0.024/video</strong><br>
+      ✓ FLUX.1-dev: $0.025 × 8 cảnh = <strong style="color:#a5b4fc;">$0.20/video</strong><br>
+      ✓ Cả hai đều dưới $0.04/ảnh budget
+    </div>
+    <div>
+      ✓ Native 1080×1920 output<br>
+      ✓ Prompt → background không có người<br>
+      ✓ Style nhất quán qua system prompt
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 16px; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 12px; color: #6b7280;">
+  ⚠ <strong style="color: #9ca3af;">Lưu ý chất lượng thật:</strong> Mockup trên chỉ là CSS giả lập — không show được output thật của FLUX. Để xem chất lượng thực tế: <a href="https://replicate.com/black-forest-labs/flux-schnell" style="color: #818cf8;">replicate.com/black-forest-labs/flux-schnell</a> → playground trực tiếp.
+</div>

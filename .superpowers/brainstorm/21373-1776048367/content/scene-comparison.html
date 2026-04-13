@@ -1,0 +1,224 @@
+<h2>So sánh: Trước vs Sau — Frame video 1 phân cảnh</h2>
+<p class="subtitle">Scene mẫu: Milo làm mặt hoảng sợ, vuốt tay — <em>"Ê! Bạn đã Follow chưa? Thì Milo cho bạn lý do ngay đây!"</em></p>
+
+<div class="split" style="align-items: flex-start; gap: 32px;">
+
+  <!-- BEFORE -->
+  <div style="flex:1">
+    <div class="label" style="color:#e05c5c; margin-bottom:12px;">❌ HIỆN TẠI</div>
+    <div style="
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto;
+      aspect-ratio: 9/16;
+      background: #ffffff;
+      border: 2px solid #e05c5c;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    ">
+      <!-- White background fills everything -->
+      <div style="position:absolute;inset:0;background:#f8f8f8;"></div>
+
+      <!-- Milo placeholder with white bg -->
+      <div style="
+        position: relative;
+        z-index: 2;
+        text-align: center;
+      ">
+        <div style="
+          width: 160px;
+          height: 220px;
+          background: #e8e8e8;
+          border: 2px dashed #ccc;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 48px;
+          margin: 0 auto;
+        ">🤖</div>
+        <div style="font-size: 10px; color: #999; margin-top: 4px;">Milo PNG — nền trắng</div>
+      </div>
+
+      <!-- Zoom indicator -->
+      <div style="
+        position: absolute;
+        bottom: 16px;
+        left: 0; right: 0;
+        text-align: center;
+        z-index: 3;
+      ">
+        <span style="
+          background: rgba(224,92,92,0.15);
+          border: 1px solid #e05c5c;
+          border-radius: 20px;
+          padding: 4px 10px;
+          font-size: 10px;
+          color: #e05c5c;
+        ">zoom 1.0x → 1.1x (khó thấy)</span>
+      </div>
+    </div>
+
+    <!-- Audio label -->
+    <div style="margin-top: 12px; max-width: 260px; margin-left: auto; margin-right: auto;">
+      <div class="label" style="font-size:10px; color:#999;">🔊 TTS đọc:</div>
+      <div style="
+        background: rgba(224,92,92,0.08);
+        border-left: 3px solid #e05c5c;
+        padding: 8px 10px;
+        font-size: 11px;
+        color: #c0392b;
+        border-radius: 0 6px 6px 0;
+        line-height: 1.5;
+        font-style: italic;
+      ">"Milo nhảy vào màn hình, làm mặt hoảng sợ, vuốt tay. Ê! Bạn đã Follow chưa? Không? Thì Milo cho bạn lý do để Follow ngay đây!"</div>
+      <div style="font-size: 10px; color: #999; margin-top: 4px;">⚠ Đọc cả mô tả hành động</div>
+    </div>
+  </div>
+
+  <!-- ARROW -->
+  <div style="display:flex; align-items:center; padding-top: 120px; font-size:28px; color: #888;">→</div>
+
+  <!-- AFTER -->
+  <div style="flex:1">
+    <div class="label" style="color:#27ae60; margin-bottom:12px;">✅ SAU KHI FIX</div>
+    <div style="
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto;
+      aspect-ratio: 9/16;
+      border: 2px solid #27ae60;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(39,174,96,0.3);
+      background: linear-gradient(160deg, #ff6b35 0%, #f7c59f 40%, #ffe8d6 70%, #fff0e6 100%);
+    ">
+      <!-- Gradient BG (emotion: surprise/happy → warm orange) -->
+      <div style="
+        position: absolute;
+        top: 8px; left: 8px;
+        font-size: 9px;
+        color: rgba(255,255,255,0.8);
+        background: rgba(0,0,0,0.2);
+        border-radius: 4px;
+        padding: 2px 6px;
+      ">🎨 Gradient: emotion=surprise</div>
+
+      <!-- Multi-pose indicator -->
+      <div style="
+        position: absolute;
+        top: 8px; right: 8px;
+        display: flex;
+        gap: 4px;
+      ">
+        <div style="width:8px;height:8px;border-radius:50%;background:#fff;opacity:0.5;"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:#fff;opacity:1;"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:#fff;opacity:0.5;"></div>
+      </div>
+
+      <!-- Milo transparent on gradient -->
+      <div style="
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        margin-bottom: 40px;
+      ">
+        <div style="
+          width: 160px;
+          height: 220px;
+          background: radial-gradient(ellipse, rgba(255,255,255,0.15) 0%, transparent 70%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 80px;
+          margin: 0 auto;
+          filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+          animation: none;
+        ">😱</div>
+        <div style="font-size: 10px; color: rgba(255,255,255,0.9);">Milo transparent (rembg)</div>
+      </div>
+
+      <!-- Pose sequence indicator -->
+      <div style="
+        position: absolute;
+        bottom: 40px;
+        left: 0; right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        z-index: 3;
+      ">
+        <span style="background:rgba(255,255,255,0.3);border-radius:12px;padding:2px 8px;font-size:9px;color:white;">wave</span>
+        <span style="background:rgba(255,255,255,0.7);border-radius:12px;padding:2px 8px;font-size:9px;color:#333;font-weight:bold;">surprise ●</span>
+        <span style="background:rgba(255,255,255,0.3);border-radius:12px;padding:2px 8px;font-size:9px;color:white;">happy</span>
+      </div>
+
+      <!-- Motion badge -->
+      <div style="
+        position: absolute;
+        bottom: 12px;
+        left: 0; right: 0;
+        text-align: center;
+        z-index: 3;
+      ">
+        <span style="
+          background: rgba(39,174,96,0.85);
+          border-radius: 20px;
+          padding: 4px 10px;
+          font-size: 9px;
+          color: white;
+        ">⚡ fast zoom + shake (emotion-based)</span>
+      </div>
+    </div>
+
+    <!-- Audio label -->
+    <div style="margin-top: 12px; max-width: 260px; margin-left: auto; margin-right: auto;">
+      <div class="label" style="font-size:10px; color:#999;">🔊 TTS đọc:</div>
+      <div style="
+        background: rgba(39,174,96,0.08);
+        border-left: 3px solid #27ae60;
+        padding: 8px 10px;
+        font-size: 11px;
+        color: #1e8449;
+        border-radius: 0 6px 6px 0;
+        line-height: 1.5;
+        font-style: italic;
+      ">"Ê! Bạn đã Follow chưa? Thì Milo cho bạn lý do ngay đây!"</div>
+      <div style="font-size: 10px; color: #999; margin-top: 4px;">✓ Chỉ đọc dialogue</div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top: 32px; padding: 16px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+  <div class="label" style="margin-bottom: 8px;">Chi tiết thay đổi</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px;">
+    <div>
+      <strong>Audio</strong><br>
+      <span style="color:#999;">SceneSplitter (Sonnet) parse dialogue riêng → TTS chỉ đọc lời Milo</span>
+    </div>
+    <div>
+      <strong>Background</strong><br>
+      <span style="color:#999;">PIL gen gradient theo emotion tag → user chọn 1 trong 3-4 option</span>
+    </div>
+    <div>
+      <strong>Milo</strong><br>
+      <span style="color:#999;">rembg xóa nền trắng → composite RGBA lên background</span>
+    </div>
+    <div>
+      <strong>Motion</strong><br>
+      <span style="color:#999;">3 pose (wave→surprise→happy) crossfade + zoom speed theo emotion</span>
+    </div>
+  </div>
+</div>

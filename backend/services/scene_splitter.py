@@ -1,4 +1,4 @@
-import google.generativeai as genai
+import anthropic
 import json, re
 from typing import List
 import logging
@@ -9,8 +9,7 @@ VALID_EMOTIONS = {"happy","wave","question","explain","recommend","cta","sleep",
 
 class SceneSplitter:
     def __init__(self, api_key: str):
-        genai.configure(api_key=api_key)
-        self._model = genai.GenerativeModel("gemini-2.0-flash")
+        self._client = anthropic.Anthropic(api_key=api_key)
 
     def split(self, script: str, lang: str = "vi") -> List[dict]:
         prompt = f"""Split this TikTok script into 3-8 scenes. Each scene is one visual moment.
@@ -22,10 +21,14 @@ Return ONLY a JSON array, no explanation:
 Script:
 {script}"""
         try:
-            response = self._model.generate_content(prompt)
-            return self._parse_scenes(response.text)
+            response = self._client.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            return self._parse_scenes(response.content[0].text)
         except Exception as e:
-            logger.error(f"Gemini scene split failed: {e}")
+            logger.error(f"Claude scene split failed: {e}")
             raise
 
     def _parse_scenes(self, raw: str) -> List[dict]:

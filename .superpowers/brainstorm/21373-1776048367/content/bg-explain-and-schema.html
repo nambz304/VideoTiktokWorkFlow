@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Background + Schema Editor</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #111827;
+    color: #f9fafb;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { color: #9ca3af; font-size: 13px; margin-bottom: 24px; }
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #6366f1;
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(99,102,241,0.3);
+  }
+
+  /* BG EXPLANATION */
+  .bg-flow {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    background: #1f2937;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #374151;
+  }
+  .act-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 12px;
+    gap: 10px;
+    position: relative;
+  }
+  .act-block + .act-block { border-left: 1px solid #374151; }
+  .act-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .act-hook .act-label { background: rgba(239,68,68,0.2); color: #f87171; }
+  .act-main .act-label { background: rgba(59,130,246,0.2); color: #60a5fa; }
+  .act-cta .act-label  { background: rgba(234,179,8,0.2);  color: #fbbf24; }
+
+  .bg-preview {
+    width: 52px;
+    height: 92px;
+    border-radius: 6px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .act-hook .bg-preview { background: linear-gradient(160deg,#f87171,#fb923c,#fcd34d); }
+  .act-main .bg-preview { background: linear-gradient(160deg,#60a5fa,#34d399,#a7f3d0); }
+  .act-cta  .bg-preview { background: linear-gradient(160deg,#fbbf24,#f97316,#ef4444); }
+
+  .bg-milo { font-size: 28px; line-height: 1; padding-bottom: 2px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)); }
+
+  .scene-chips {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+  .scene-chip {
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.07);
+    color: #d1d5db;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .scene-chip-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .act-hook .scene-chip-dot { background: #f87171; }
+  .act-main .scene-chip-dot { background: #60a5fa; }
+  .act-cta  .scene-chip-dot { background: #fbbf24; }
+
+  .bg-cost { font-size: 10px; color: #6b7280; }
+
+  .consistency-note {
+    background: rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.25);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #a5b4fc;
+    margin-top: 14px;
+    line-height: 1.7;
+  }
+  .consistency-note code {
+    background: rgba(99,102,241,0.2);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+    color: #c7d2fe;
+  }
+
+  /* SCHEMA EDITOR */
+  .schema-editor {
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .schema-header {
+    background: #111827;
+    padding: 10px 16px;
+    font-size: 11px;
+    color: #6b7280;
+    border-bottom: 1px solid #374151;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .schema-header span { color: #4ade80; font-weight: 600; }
+  .scene-card {
+    border-bottom: 1px solid #374151;
+    padding: 14px 16px;
+  }
+  .scene-card:last-child { border-bottom: none; }
+  .scene-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .scene-num {
+    width: 24px; height: 24px;
+    background: #374151;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    color: #9ca3af;
+    flex-shrink: 0;
+  }
+  .act-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .badge-hook { background: rgba(239,68,68,0.2); color: #f87171; }
+  .badge-main { background: rgba(59,130,246,0.2); color: #60a5fa; }
+  .badge-cta  { background: rgba(234,179,8,0.2);  color: #fbbf24; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 6px 12px;
+    align-items: start;
+    margin-bottom: 8px;
+  }
+  .field-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-top: 7px;
+  }
+  .field-input {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: #f9fafb;
+    width: 100%;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+    transition: border-color 0.15s;
+  }
+  .field-input:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #1a2035;
+  }
+  .field-input.dialogue {
+    color: #86efac;
+    border-color: rgba(134,239,172,0.3);
+    background: rgba(134,239,172,0.04);
+  }
+  .field-input.dialogue:focus { border-color: #4ade80; }
+
+  .poses-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pose-tag {
+    background: #374151;
+    border: 1px solid #4b5563;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: #d1d5db;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .pose-tag.active {
+    background: rgba(99,102,241,0.2);
+    border-color: #6366f1;
+    color: #a5b4fc;
+  }
+  .emotion-select {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    color: #f9fafb;
+    font-family: inherit;
+  }
+  .emotion-select:focus { outline: none; border-color: #6366f1; }
+
+  .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { background: #4f46e5; }
+  .copy-btn:active { background: #4338ca; }
+
+  .schema-footer {
+    padding: 14px 16px;
+    border-top: 1px solid #374151;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #111827;
+  }
+  .note-text { font-size: 11px; color: #6b7280; }
+
+  .output-preview {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 8px;
+    padding: 14px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    color: #8b949e;
+    margin-top: 16px;
+    white-space: pre;
+    overflow-x: auto;
+    display: none;
+  }
+  .output-preview.visible { display: block; }
+  .json-key { color: #79c0ff; }
+  .json-str { color: #a5d6ff; }
+  .json-dialogue { color: #3fb950; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h2>Background + Scene Schema</h2>
+<p class="subtitle">Giải thích BG và chỉnh sửa schema phân cảnh trước khi implement</p>
+
+<!-- SECTION 1: BG EXPLANATION -->
+<div class="section">
+  <div class="section-title">Background (BG) là gì và hoạt động thế nào?</div>
+
+  <div class="bg-flow">
+    <div class="act-block act-hook">
+      <div class="act-label">Hook</div>
+      <div class="bg-preview">
+        <div class="bg-milo">😱</div>
+      </div>
+      <div class="scene-chips">
+        <div class="scene-chip"><span class="scene-chip-dot"></span>Cảnh 1</div>
+      </div>
+      <div class="bg-cost">1 ảnh nền · $0.003</div>
+    </div>
+
+    <div class="act-block act-main">
+      <div class="act-label">Main</div>
+      <div class="bg-preview">
+        <div class="bg-milo">🤔</div>
+      </div>
+      <div class="scene-chips">
+        <div class="scene-chip"><span class="scene-chip-dot"></span>Cảnh 2</div>
+        <div class="scene-chip"><span class="scene-chip-dot"></span>Cảnh 3</div>
+        <div class="scene-chip"><span class="scene-chip-dot"></span>Cảnh 4</div>
+      </div>
+      <div class="bg-cost">1 ảnh nền · $0.003</div>
+    </div>
+
+    <div class="act-block act-cta">
+      <div class="act-label">CTA</div>
+      <div class="bg-preview">
+        <div class="bg-milo">📣</div>
+      </div>
+      <div class="scene-chips">
+        <div class="scene-chip"><span class="scene-chip-dot"></span>Cảnh 5</div>
+      </div>
+      <div class="bg-cost">1 ảnh nền · $0.003</div>
+    </div>
+  </div>
+
+  <div class="consistency-note">
+    <strong>Tại sao 3 BG mà vẫn nhất quán?</strong><br>
+    Cả 3 lần gọi FLUX đều dùng chung <code>style_prefix</code> (aesthetic, màu sắc, ánh sáng) và cùng <code>seed</code> cố định theo video — nên 3 ảnh tuy khác nội dung nhưng cùng "cảm giác thương hiệu". Giống như 3 cảnh quay cùng một bộ phim: cùng nhà quay phim, cùng tone màu, chỉ cảnh thay đổi.
+  </div>
+</div>
+
+<!-- SECTION 2: SCHEMA EDITOR -->
+<div class="section">
+  <div class="section-title">Schema phân cảnh — xem và chỉnh sửa</div>
+  <p style="font-size: 12px; color: #9ca3af; margin-bottom: 14px;">
+    Đây là output mà AI (Sonnet) sẽ tạo ra từ kịch bản. <span style="color:#86efac;">Lời thoại (xanh)</span> = TTS đọc. Poses = cử chỉ Milo. Bạn có thể sửa trực tiếp.
+  </p>
+
+  <div class="schema-editor">
+    <div class="schema-header">
+      <span>SceneSplitter output</span>
+      <span style="color:#4b5563;">claude-sonnet-4-6 · 5 cảnh</span>
+    </div>
+
+    <!-- Scene 1: Hook -->
+    <div class="scene-card">
+      <div class="scene-card-header">
+        <div class="scene-num">1</div>
+        <div class="act-badge badge-hook">hook</div>
+        <div style="font-size:11px;color:#6b7280;">Cảnh đầu — gây chú ý</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🎬 Hành động</div>
+        <textarea class="field-input" rows="2" id="s1-action">Milo vào màn hình với điệu nhảy hài hước, làm mặt hoảng sợ và vuốt tay</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🎙 Lời thoại</div>
+        <textarea class="field-input dialogue" rows="2" id="s1-dialogue">Ê! Bạn đã Follow chưa? Không? Thì Milo cho bạn lý do để Follow ngay đây!</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🤖 Poses</div>
+        <div>
+          <div class="poses-row" id="s1-poses">
+            <div class="pose-tag active" onclick="togglePose(this)">wave</div>
+            <div class="pose-tag active" onclick="togglePose(this)">surprise</div>
+            <div class="pose-tag active" onclick="togglePose(this)">happy</div>
+            <div class="pose-tag" onclick="togglePose(this)">think</div>
+            <div class="pose-tag" onclick="togglePose(this)">point</div>
+            <div class="pose-tag" onclick="togglePose(this)">cta</div>
+          </div>
+          <div style="font-size:10px;color:#6b7280;margin-top:6px;">Click để bật/tắt. Thứ tự = thứ tự xuất hiện trong video.</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">😶 Emotion</div>
+        <select class="emotion-select" id="s1-emotion">
+          <option value="surprise" selected>surprise</option>
+          <option value="happy">happy</option>
+          <option value="wave">wave</option>
+          <option value="think">think</option>
+          <option value="point">point</option>
+          <option value="recommend">recommend</option>
+          <option value="cta">cta</option>
+          <option value="sleep">sleep</option>
+          <option value="eat">eat</option>
+          <option value="exercise">exercise</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Scene 2: Main -->
+    <div class="scene-card">
+      <div class="scene-card-header">
+        <div class="scene-num">2</div>
+        <div class="act-badge badge-main">main</div>
+        <div style="font-size:11px;color:#6b7280;">Nội dung chính</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🎬 Hành động</div>
+        <textarea class="field-input" rows="2" id="s2-action">Milo cầm một viên vitamin to xác, nhìn thẳng vào camera với vẻ nghiêm túc</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🎙 Lời thoại</div>
+        <textarea class="field-input dialogue" rows="2" id="s2-dialogue">Hàng ngày mình ăn cơm, bạn ăn gì để sống khoẻ?</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🤖 Poses</div>
+        <div class="poses-row" id="s2-poses">
+          <div class="pose-tag active" onclick="togglePose(this)">think</div>
+          <div class="pose-tag active" onclick="togglePose(this)">point</div>
+          <div class="pose-tag" onclick="togglePose(this)">surprise</div>
+          <div class="pose-tag" onclick="togglePose(this)">eat</div>
+          <div class="pose-tag" onclick="togglePose(this)">happy</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">😶 Emotion</div>
+        <select class="emotion-select" id="s2-emotion">
+          <option value="think" selected>think</option>
+          <option value="happy">happy</option>
+          <option value="surprise">surprise</option>
+          <option value="point">point</option>
+          <option value="eat">eat</option>
+          <option value="recommend">recommend</option>
+          <option value="cta">cta</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Scene 3: Main -->
+    <div class="scene-card">
+      <div class="scene-card-header">
+        <div class="scene-num">3</div>
+        <div class="act-badge badge-main">main</div>
+        <div style="font-size:11px;color:#6b7280;">Nội dung chính</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🎬 Hành động</div>
+        <textarea class="field-input" rows="2" id="s3-action">Milo chỉ vào chiếc vòng đo nhịp tim, mắt mở to</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🎙 Lời thoại</div>
+        <textarea class="field-input dialogue" rows="2" id="s3-dialogue">Này, máy đo nhịp tim này biết bạn sống còn hay không! Chỉ Follow là biết cách dùng.</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🤖 Poses</div>
+        <div class="poses-row" id="s3-poses">
+          <div class="pose-tag active" onclick="togglePose(this)">point</div>
+          <div class="pose-tag active" onclick="togglePose(this)">surprise</div>
+          <div class="pose-tag active" onclick="togglePose(this)">happy</div>
+          <div class="pose-tag" onclick="togglePose(this)">recommend</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">😶 Emotion</div>
+        <select class="emotion-select" id="s3-emotion">
+          <option value="point" selected>point</option>
+          <option value="surprise">surprise</option>
+          <option value="recommend">recommend</option>
+          <option value="happy">happy</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Scene 4: CTA -->
+    <div class="scene-card">
+      <div class="scene-card-header">
+        <div class="scene-num">4</div>
+        <div class="act-badge badge-cta">cta</div>
+        <div style="font-size:11px;color:#6b7280;">Kêu gọi hành động</div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🎬 Hành động</div>
+        <textarea class="field-input" rows="2" id="s4-action">Milo cười ha hả, nhảy nhót, ra dấu tay mời Follow</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🎙 Lời thoại</div>
+        <textarea class="field-input dialogue" rows="2" id="s4-dialogue">Follow Milo ngay để không bỏ lỡ bí kíp sống khoẻ nhé!</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-label">🤖 Poses</div>
+        <div class="poses-row" id="s4-poses">
+          <div class="pose-tag active" onclick="togglePose(this)">happy</div>
+          <div class="pose-tag active" onclick="togglePose(this)">wave</div>
+          <div class="pose-tag active" onclick="togglePose(this)">cta</div>
+          <div class="pose-tag" onclick="togglePose(this)">surprise</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-label">😶 Emotion</div>
+        <select class="emotion-select" id="s4-emotion">
+          <option value="cta" selected>cta</option>
+          <option value="happy">happy</option>
+          <option value="wave">wave</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="schema-footer">
+      <button class="copy-btn" onclick="generateJSON()">📋 Xuất JSON để dùng</button>
+      <div class="note-text">JSON này sẽ là input cho VideoAssembler và BackgroundGenerator</div>
+    </div>
+  </div>
+
+  <div class="output-preview" id="json-output"></div>
+</div>
+
+<script>
+function togglePose(el) {
+  el.classList.toggle('active');
+}
+
+function getActivePoses(containerId) {
+  const container = document.getElementById(containerId);
+  return Array.from(container.querySelectorAll('.pose-tag.active')).map(el => el.textContent.trim());
+}
+
+function generateJSON() {
+  const scenes = [
+    {
+      order: 1,
+      act: "hook",
+      action: document.getElementById('s1-action').value,
+      dialogue: document.getElementById('s1-dialogue').value,
+      poses: getActivePoses('s1-poses'),
+      emotion: document.getElementById('s1-emotion').value
+    },
+    {
+      order: 2,
+      act: "main",
+      action: document.getElementById('s2-action').value,
+      dialogue: document.getElementById('s2-dialogue').value,
+      poses: getActivePoses('s2-poses'),
+      emotion: document.getElementById('s2-emotion').value
+    },
+    {
+      order: 3,
+      act: "main",
+      action: document.getElementById('s3-action').value,
+      dialogue: document.getElementById('s3-dialogue').value,
+      poses: getActivePoses('s3-poses'),
+      emotion: document.getElementById('s3-emotion').value
+    },
+    {
+      order: 4,
+      act: "cta",
+      action: document.getElementById('s4-action').value,
+      dialogue: document.getElementById('s4-dialogue').value,
+      poses: getActivePoses('s4-poses'),
+      emotion: document.getElementById('s4-emotion').value
+    }
+  ];
+
+  const jsonStr = JSON.stringify(scenes, null, 2);
+  const el = document.getElementById('json-output');
+  el.classList.add('visible');
+
+  // Syntax highlight simple version
+  el.innerHTML = jsonStr
+    .replace(/"(dialogue)":/g, '"<span class="json-dialogue">$1</span>":')
+    .replace(/"([^"]+)":/g, '"<span class="json-key">$1</span>":')
+    .replace(/: "([^"]*)"/g, ': "<span class="json-str">$1</span>"');
+
+  navigator.clipboard?.writeText(jsonStr).catch(() => {});
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
+</body>
+</html>

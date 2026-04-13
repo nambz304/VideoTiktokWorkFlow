@@ -41,6 +41,7 @@ export default function Step3Images({
   }
 
   const imgFilename = (path: string | null) => path?.split("/").pop() ?? "";
+  const imageUrl = (path: string | null) => path ? `/static/milo/${path.split("/").pop()}` : "";
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden">
@@ -59,9 +60,8 @@ export default function Step3Images({
               <div key={scene.id}
                 className={`bg-gray-900 border rounded-xl overflow-hidden transition-all
                   ${approvedIds.has(scene.id) ? "border-emerald-600" : "border-gray-800"}`}>
-                <div className="bg-gradient-to-br from-blue-950 to-purple-950 h-32 flex items-center justify-center text-4xl">
-                  🤖
-                </div>
+                <img src={imageUrl(scene.image_path)} alt={imgFilename(scene.image_path)}
+                  className="h-32 w-full object-contain bg-gray-900" />
                 <div className="p-3">
                   <div className="text-xs text-gray-500 font-semibold mb-1">CẢNH {i + 1} · {scene.emotion_tag}</div>
                   <p className="text-xs text-gray-400 mb-2 line-clamp-2">{scene.script_text}</p>
@@ -81,8 +81,9 @@ export default function Step3Images({
                     <div className="mt-3 grid grid-cols-3 gap-1">
                       {allImages.map((img) => (
                         <button key={img.filename} onClick={() => swapImage(scene.id, img.path)}
-                          className="bg-gray-800 rounded p-1 text-xs text-gray-400 hover:bg-gray-700 truncate">
-                          {img.filename.replace("milo_", "").replace(".png", "")}
+                          className="bg-gray-800 rounded p-1 text-xs text-gray-400 hover:bg-gray-700 flex flex-col items-center gap-1">
+                          <img src={img.url} alt={img.filename} className="h-10 w-10 object-contain" />
+                          <span className="truncate w-full text-center">{img.filename.replace("milo_", "").replace(".png", "")}</span>
                         </button>
                       ))}
                     </div>

@@ -7,8 +7,8 @@ def generator():
     return ScriptGenerator(api_key="fake_key")
 
 def test_generate_scripts_returns_list(generator):
-    mock_response = MagicMock()
-    mock_response.text = """
+    mock_content = MagicMock()
+    mock_content.text = """
     SCRIPT_1:
     Hook: Bạn có biết thiếu ngủ làm bạn béo không?
     Content: Ngủ dưới 6 tiếng mỗi đêm tăng hormone ghrelin...
@@ -18,7 +18,9 @@ def test_generate_scripts_returns_list(generator):
     Content: Nghiên cứu mới nhất cho thấy...
     CTA: Link thực phẩm chức năng hỗ trợ ngủ ngon ở bio!
     """
-    with patch.object(generator._model, 'generate_content', return_value=mock_response):
+    mock_response = MagicMock()
+    mock_response.content = [mock_content]
+    with patch.object(generator._client.messages, 'create', return_value=mock_response):
         scripts = generator.generate_scripts(
             topic="Ngủ và giảm cân",
             lang="vi",
@@ -34,3 +36,9 @@ def test_parse_scripts_splits_correctly(generator):
     scripts = generator._parse_scripts(raw)
     assert len(scripts) == 2
     assert "Hook A" in scripts[0]
+
+def test_parse_scripts_ignores_preamble(generator):
+    raw = "Đây là preamble\nSCRIPT_1:\nHook A\nSCRIPT_2:\nHook B"
+    scripts = generator._parse_scripts(raw)
+    assert len(scripts) == 2
+    assert "preamble" not in scripts[0]

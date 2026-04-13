@@ -29,8 +29,11 @@ export default function ChatSidebar({ sessionId, step }: ChatSidebarProps) {
     try {
       const { reply } = await sendChat(sessionId, text, step);
       setMessages((prev) => [...prev, { role: "ai", text: reply, timestamp: Date.now() }]);
-    } catch {
-      setMessages((prev) => [...prev, { role: "ai", text: "Lỗi kết nối, thử lại nhé.", timestamp: Date.now() }]);
+    } catch (err) {
+      const msg = err instanceof Error && err.message.includes("429")
+        ? "Gemini API hết quota. Vui lòng nâng cấp plan hoặc thử lại sau."
+        : "Lỗi kết nối, thử lại nhé.";
+      setMessages((prev) => [...prev, { role: "ai", text: msg, timestamp: Date.now() }]);
     } finally {
       setLoading(false);
     }

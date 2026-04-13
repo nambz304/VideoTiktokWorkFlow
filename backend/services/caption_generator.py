@@ -1,4 +1,4 @@
-import google.generativeai as genai
+import anthropic
 import re
 import logging
 
@@ -7,8 +7,7 @@ logger = logging.getLogger(__name__)
 
 class CaptionGenerator:
     def __init__(self, api_key: str):
-        genai.configure(api_key=api_key)
-        self._model = genai.GenerativeModel("gemini-2.0-flash")
+        self._client = anthropic.Anthropic(api_key=api_key)
 
     def generate(self, script: str, topic: str, lang: str) -> dict:
         lang_note = "Tiếng Việt" if lang == "vi" else "English"
@@ -27,10 +26,14 @@ HASHTAGS:
 #tag1 #tag2 #tag3 ... (10-15 hashtags, mix trending + niche)
 """
         try:
-            response = self._model.generate_content(prompt)
-            return self._parse(response.text)
+            response = self._client.messages.create(
+                model="claude-haiku-4-5-20251001",
+                max_tokens=512,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            return self._parse(response.content[0].text)
         except Exception as e:
-            logger.error(f"Gemini caption generation failed: {e}")
+            logger.error(f"Claude caption generation failed: {e}")
             raise
 
     def _parse(self, raw: str) -> dict:

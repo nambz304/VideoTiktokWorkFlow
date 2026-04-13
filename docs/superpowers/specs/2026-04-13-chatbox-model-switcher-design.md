@@ -97,14 +97,14 @@ Display label mapping (shorten for compact UI):
 
 | Model ID | Label |
 |---|---|
-| gemini-2.0-flash | Flash 2.0 |
-| gemini-1.5-pro | Pro 1.5 |
-| gemini-1.5-flash | Flash 1.5 |
+| gemini-2.0-flash | Gemini Flash 2.0 |
+| gemini-1.5-pro | Gemini Pro 1.5 |
+| gemini-1.5-flash | Gemini Flash 1.5 |
 | claude-opus-4-6 | Opus 4.6 |
 | claude-sonnet-4-6 | Sonnet 4.6 |
 | claude-haiku-4-5-20251001 | Haiku 4.5 |
 | gpt-4o | GPT-4o |
-| gpt-4o-mini | 4o-mini |
+| gpt-4o-mini | GPT-4o-mini |
 
 ### Missing key inline flow
 

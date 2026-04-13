@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Journey</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #111827; color: #f9fafb;
+    padding: 24px; min-height: 100vh;
+  }
+  h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #9ca3af; font-size: 13px; margin-bottom: 28px; }
+  .section { margin-bottom: 36px; }
+  .section-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #6366f1;
+    margin-bottom: 16px; padding-bottom: 6px;
+    border-bottom: 1px solid rgba(99,102,241,0.3);
+  }
+
+  /* PHASE TABS */
+  .phases { display: flex; gap: 0; margin-bottom: 24px; border-radius: 10px; overflow: hidden; border: 1px solid #374151; }
+  .phase-tab {
+    flex: 1; padding: 12px 8px; text-align: center;
+    font-size: 11px; font-weight: 700; cursor: pointer;
+    background: #1f2937; color: #6b7280;
+    border-right: 1px solid #374151;
+    transition: all 0.15s;
+  }
+  .phase-tab:last-child { border-right: none; }
+  .phase-tab .phase-num { font-size: 16px; display: block; margin-bottom: 3px; }
+  .phase-tab.once { color: #60a5fa; }
+  .phase-tab.always { color: #4ade80; }
+  .phase-tab-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; opacity: 0.7; }
+
+  /* ONBOARDING */
+  .onboard-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .onboard-step {
+    background: #1f2937;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #374151;
+  }
+  .step-screen {
+    background: #111827;
+    padding: 14px;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .screen-title { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; }
+  .screen-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+  /* Mock UI elements */
+  .mock-input {
+    background: #1f2937; border: 1px solid #374151; border-radius: 5px;
+    padding: 6px 8px; font-size: 10px; color: #9ca3af; width: 100%;
+  }
+  .mock-btn {
+    background: #6366f1; border-radius: 5px; padding: 6px 10px;
+    font-size: 10px; font-weight: 700; color: white; text-align: center;
+  }
+  .mock-btn.green { background: #16a34a; }
+  .mock-btn.sm { padding: 4px 8px; font-size: 9px; }
+  .mock-upload {
+    border: 2px dashed #374151; border-radius: 6px; padding: 12px;
+    text-align: center; font-size: 10px; color: #6b7280;
+  }
+  .mock-upload .up-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .ref-imgs { display: flex; gap: 4px; }
+  .ref-img {
+    flex: 1; aspect-ratio: 1; background: #374151; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .mock-textarea {
+    background: #1f2937; border: 1px solid #374151; border-radius: 5px;
+    padding: 6px 8px; font-size: 9px; color: #9ca3af; width: 100%;
+    min-height: 50px; line-height: 1.4;
+  }
+  .char-preview {
+    background: #1f2937; border-radius: 6px; padding: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .char-avatar { font-size: 24px; }
+  .char-info { font-size: 10px; }
+  .char-name { color: #e5e7eb; font-weight: 700; }
+  .char-desc { color: #6b7280; margin-top: 2px; line-height: 1.4; }
+
+  .step-meta {
+    padding: 10px 12px;
+    font-size: 11px; color: #d1d5db;
+    border-top: 1px solid #374151;
+  }
+  .step-meta strong { color: #e5e7eb; display: block; margin-bottom: 3px; }
+
+  /* ONE TIME BADGE */
+  .once-badge {
+    display: inline-block;
+    background: rgba(96,165,250,0.15); color: #60a5fa;
+    font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 10px;
+    border: 1px solid rgba(96,165,250,0.3); margin-bottom: 10px;
+  }
+  .every-badge {
+    display: inline-block;
+    background: rgba(74,222,128,0.15); color: #4ade80;
+    font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 10px;
+    border: 1px solid rgba(74,222,128,0.3); margin-bottom: 10px;
+  }
+
+  /* VIDEO CREATION FLOW */
+  .video-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .flow-step {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .flow-left {
+    background: #1f2937;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #374151;
+  }
+  .flow-step-num {
+    font-size: 10px; font-weight: 700; color: #6b7280;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .flow-step-name { font-size: 13px; font-weight: 700; color: #e5e7eb; margin-bottom: 4px; }
+  .flow-step-who { font-size: 10px; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 6px; }
+  .who-user { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .who-ai   { background: rgba(167,139,250,0.15); color: #a78bfa; }
+  .who-auto { background: rgba(74,222,128,0.15); color: #4ade80; }
+  .flow-step-desc { font-size: 11px; color: #9ca3af; line-height: 1.5; }
+
+  .flow-right {
+    background: #111827;
+    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid #1f2937;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Scene cards */
+  .scenes-row { display: flex; gap: 8px; overflow-x: auto; }
+  .scene-card-mini {
+    flex-shrink: 0;
+    width: 80px;
+    background: #1f2937;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #374151;
+  }
+  .scene-img {
+    width: 80px; height: 120px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    position: relative;
+  }
+  .scene-img-act1 { background: linear-gradient(160deg,#f87171,#fb923c); }
+  .scene-img-act2 { background: linear-gradient(160deg,#60a5fa,#34d399); }
+  .scene-img-act3 { background: linear-gradient(160deg,#a78bfa,#6366f1); }
+  .scene-img-act4 { background: linear-gradient(160deg,#fbbf24,#f97316); }
+  .kontext-icon {
+    position: absolute; top: 4px; right: 4px;
+    font-size: 8px; background: rgba(0,0,0,0.5);
+    border-radius: 3px; padding: 1px 3px; color: #4ade80;
+  }
+  .scene-meta { padding: 4px 6px; }
+  .scene-act { font-size: 8px; color: #6b7280; }
+  .scene-emotion { font-size: 9px; color: #d1d5db; font-weight: 700; }
+
+  .regen-area {
+    display: flex; gap: 6px; align-items: center;
+    background: rgba(99,102,241,0.05);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: 6px; padding: 8px 10px;
+    font-size: 11px; color: #9ca3af;
+  }
+
+  /* WHAT KONTEXT CHANGES */
+  .change-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .change-col {
+    background: #1f2937; border-radius: 10px; padding: 14px;
+  }
+  .change-col-title { font-size: 11px; font-weight: 700; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #374151; }
+  .change-col.old .change-col-title { color: #f87171; }
+  .change-col.new .change-col-title { color: #4ade80; }
+  .change-item { display: flex; gap: 8px; font-size: 11px; color: #d1d5db; margin-bottom: 8px; line-height: 1.4; }
+  .change-icon { flex-shrink: 0; }
+
+  .key-diff {
+    background: rgba(74,222,128,0.07);
+    border: 1px solid rgba(74,222,128,0.25);
+    border-radius: 8px; padding: 12px 14px;
+    font-size: 12px; color: #d1d5db;
+    margin-top: 14px; line-height: 1.7;
+  }
+  .key-diff strong { color: #4ade80; }
+</style>
+</head>
+<body>
+
+<h2>User flow với FLUX.1 Kontext</h2>
+<p class="subtitle">Từ lúc đăng ký đến lúc có video TikTok — 2 giai đoạn rõ ràng</p>
+
+<!-- PHASE INDICATOR -->
+<div class="phases">
+  <div class="phase-tab once">
+    <span class="phase-num">🏗</span>
+    Onboarding
+    <div class="phase-tab-label">Làm 1 lần</div>
+  </div>
+  <div class="phase-tab always">
+    <span class="phase-num">🎬</span>
+    Tạo video
+    <div class="phase-tab-label">Mỗi lần dùng</div>
+  </div>
+</div>
+
+<!-- PHASE 1: ONBOARDING -->
+<div class="section">
+  <div class="once-badge">🏗 Giai đoạn 1 — Làm 1 lần khi mới vào</div>
+  <div class="onboard-steps">
+
+    <!-- Step A: Create channel -->
+    <div class="onboard-step">
+      <div class="step-screen">
+        <div class="screen-title">Bước 1 — Kênh của bạn</div>
+        <div class="screen-body">
+          <div class="mock-input">Tên kênh: Sống khoẻ cùng AI</div>
+          <div class="mock-input">Chủ đề: Thực phẩm chức năng, sức khoẻ</div>
+          <div class="mock-input">TikTok: @songkhoe_ai</div>
+          <div style="font-size:9px;color:#6b7280;margin-top:4px;">Chủ đề giúp AI viết kịch bản đúng ngữ cảnh</div>
+        </div>
+      </div>
+      <div class="step-meta">
+        <strong>Tạo kênh</strong>
+        Khai báo chủ đề, TikTok account, ngôn ngữ. Làm 1 lần.
+      </div>
+    </div>
+
+    <!-- Step B: Create character -->
+    <div class="onboard-step">
+      <div class="step-screen">
+        <div class="screen-title">Bước 2 — Nhân vật</div>
+        <div class="screen-body">
+          <div class="mock-input">Tên nhân vật: Milo</div>
+          <div class="ref-imgs">
+            <div class="ref-img">🤖</div>
+            <div class="ref-img" style="background:#4b5563;border:1px dashed #6b7280;font-size:12px;color:#6b7280;">+</div>
+            <div class="ref-img" style="background:#4b5563;border:1px dashed #6b7280;font-size:12px;color:#6b7280;">+</div>
+          </div>
+          <div style="font-size:9px;color:#6b7280;">Upload 1-3 ảnh ref (đủ dùng cho Kontext)</div>
+          <div class="mock-textarea">Robot hoạt hình, vui vẻ hài hước, thích nhảy và làm mặt ngộ nghĩnh, luôn nhiệt tình với sức khoẻ...</div>
+        </div>
+      </div>
+      <div class="step-meta">
+        <strong>Tạo nhân vật</strong>
+        Upload 1-3 ảnh ref + mô tả tính cách. Kontext dùng ảnh này làm reference mỗi lần gen — không cần train.
+      </div>
+    </div>
+
+    <!-- Step C: Preview -->
+    <div class="onboard-step">
+      <div class="step-screen">
+        <div class="screen-title">Bước 3 — Xác nhận</div>
+        <div class="screen-body">
+          <div class="char-preview">
+            <div class="char-avatar">🤖</div>
+            <div class="char-info">
+              <div class="char-name">Milo</div>
+              <div class="char-desc">Robot · Vui vẻ · Sức khoẻ<br>3 ảnh ref · Sống khoẻ cùng AI</div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:#6b7280;padding:6px 0;">✓ FLUX Kontext sẵn sàng gen</div>
+          <div class="mock-btn green" style="margin-top:auto;">Bắt đầu tạo video đầu tiên →</div>
+        </div>
+      </div>
+      <div class="step-meta">
+        <strong>Sẵn sàng</strong>
+        Không cần chờ train. Từ lúc upload ảnh đến lúc gen video đầu tiên: &lt; 2 phút.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE 2: VIDEO CREATION -->
+<div class="section">
+  <div class="every-badge">🎬 Giai đoạn 2 — Mỗi lần tạo video</div>
+  <div class="video-flow">
+
+    <!-- Step 1: Topic -->
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-step-num">Bước 1</div>
+        <div class="flow-step-name">Chọn chủ đề</div>
+        <div class="flow-step-who who-user">👤 User làm</div>
+        <div class="flow-step-desc">Nhập topic hoặc chọn từ trending. ~30 giây.</div>
+      </div>
+      <div class="flow-right">
+        <div class="mock-input" style="background:#1f2937;border-color:#374151;font-size:11px;">💡 "Vitamin D3 thiếu hụt và cách bổ sung"</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+          <div style="background:#374151;border-radius:10px;padding:2px 8px;font-size:9px;color:#9ca3af;">#vitamin</div>
+          <div style="background:#374151;border-radius:10px;padding:2px 8px;font-size:9px;color:#9ca3af;">#suckhoe</div>
+          <div style="background:#374151;border-radius:10px;padding:2px 8px;font-size:9px;color:#9ca3af;">#healthy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Script -->
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-step-num">Bước 2</div>
+        <div class="flow-step-name">Chọn kịch bản</div>
+        <div class="flow-step-who who-ai">🤖 AI gen</div>
+        <div class="flow-step-desc">Sonnet tạo 2-3 kịch bản khác nhau. User chọn 1 hoặc chỉnh sửa.</div>
+      </div>
+      <div class="flow-right">
+        <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">AI đề xuất 2 kịch bản:</div>
+        <div style="background:#1f2937;border:1px solid #374151;border-radius:6px;padding:8px;font-size:10px;color:#d1d5db;line-height:1.5;cursor:pointer;border-color:#6366f1;">
+          ✓ <strong style="color:#a5b4fc;">Kịch bản A (vui nhộn):</strong> Milo làm mặt hoảng hốt: "Trời ơi bạn có biết 70% người Việt thiếu D3?..."
+        </div>
+        <div style="background:#1f2937;border:1px solid #374151;border-radius:6px;padding:8px;font-size:10px;color:#9ca3af;line-height:1.5;margin-top:6px;cursor:pointer;">
+          <strong>Kịch bản B (thông tin):</strong> Vitamin D3 là gì và tại sao cơ thể cần...
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Scenes -->
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-step-num">Bước 3</div>
+        <div class="flow-step-name">Phân cảnh + gen ảnh</div>
+        <div class="flow-step-who who-auto">⚡ Tự động</div>
+        <div class="flow-step-desc">SceneSplitter phân cảnh → FLUX Kontext gen mỗi cảnh với Milo ref. Mỗi cảnh ~15s.</div>
+      </div>
+      <div class="flow-right">
+        <div style="font-size:10px;color:#6b7280;margin-bottom:8px;">Kontext gen 4 cảnh — Milo ref images + scene prompt:</div>
+        <div class="scenes-row">
+          <div class="scene-card-mini">
+            <div class="scene-img scene-img-act1">
+              🤖<div class="kontext-icon">K</div>
+            </div>
+            <div class="scene-meta">
+              <div class="scene-act">hook</div>
+              <div class="scene-emotion">😱 surprise</div>
+            </div>
+          </div>
+          <div class="scene-card-mini">
+            <div class="scene-img scene-img-act2">
+              🤖<div class="kontext-icon">K</div>
+            </div>
+            <div class="scene-meta">
+              <div class="scene-act">main</div>
+              <div class="scene-emotion">🤔 think</div>
+            </div>
+          </div>
+          <div class="scene-card-mini">
+            <div class="scene-img scene-img-act3">
+              🤖<div class="kontext-icon">K</div>
+            </div>
+            <div class="scene-meta">
+              <div class="scene-act">main</div>
+              <div class="scene-emotion">👆 point</div>
+            </div>
+          </div>
+          <div class="scene-card-mini">
+            <div class="scene-img scene-img-act4">
+              🤖<div class="kontext-icon">K</div>
+            </div>
+            <div class="scene-meta">
+              <div class="scene-act">cta</div>
+              <div class="scene-emotion">📣 cta</div>
+            </div>
+          </div>
+        </div>
+        <div class="regen-area" style="margin-top:8px;">
+          🔄 <span>Click từng cảnh để gen lại nếu không ưng · ~15s/cảnh · $0.05</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Export -->
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-step-num">Bước 4</div>
+        <div class="flow-step-name">Xuất video</div>
+        <div class="flow-step-who who-auto">⚡ Tự động</div>
+        <div class="flow-step-desc">TTS từ dialogue, ghép cảnh, thêm BGM → video TikTok sẵn sàng.</div>
+      </div>
+      <div class="flow-right" style="flex-direction:row;align-items:center;gap:12px;">
+        <div style="font-size:32px;">🎬</div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#4ade80;margin-bottom:4px;">Video sẵn sàng!</div>
+          <div style="font-size:10px;color:#9ca3af;line-height:1.6;">
+            ✓ Audio: Milo đọc lời thoại<br>
+            ✓ Visual: Milo đúng hành động từng cảnh<br>
+            ✓ Thời lượng: ~45 giây<br>
+            ✓ Caption + hashtag tự gen
+          </div>
+        </div>
+        <div style="margin-left:auto;">
+          <div class="mock-btn" style="margin-bottom:6px;font-size:10px;">⬇ Tải xuống</div>
+          <div class="mock-btn green" style="font-size:10px;">📱 Đăng TikTok</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- KEY DIFFERENCE FROM CURRENT -->
+<div class="section">
+  <div class="section-title">Thay đổi so với app hiện tại</div>
+  <div class="change-compare">
+    <div class="change-col old">
+      <div class="change-col-title">❌ Trước (sprite + composite)</div>
+      <div class="change-item"><span class="change-icon">🖼</span>10 PNG Milo cố định — chỉ 10 cảm xúc</div>
+      <div class="change-item"><span class="change-icon">⚙️</span>rembg xóa nền + PIL composite thủ công</div>
+      <div class="change-item"><span class="change-icon">🤖</span>Milo "dán" lên background — không tự nhiên</div>
+      <div class="change-item"><span class="change-icon">👤</span>Chỉ 1 nhân vật cố định (Milo)</div>
+      <div class="change-item"><span class="change-icon">⏱</span>User không setup gì — nhưng giới hạn</div>
+    </div>
+    <div class="change-col new">
+      <div class="change-col-title">✅ Sau (FLUX Kontext)</div>
+      <div class="change-item"><span class="change-icon">🎨</span>Milo gen mới mỗi cảnh — hành động chính xác theo kịch bản</div>
+      <div class="change-item"><span class="change-icon">✨</span>BG + Milo tích hợp — 1 ảnh duy nhất, tự nhiên</div>
+      <div class="change-item"><span class="change-icon">🤖</span>Milo ăn khớp ngữ cảnh: cầm vitamin, chỉ vòng đo nhịp tim...</div>
+      <div class="change-item"><span class="change-icon">👥</span>Mỗi user tạo nhân vật riêng — upload ảnh ref</div>
+      <div class="change-item"><span class="change-icon">⚡</span>Setup &lt; 2 phút, tạo video ~3 phút tổng</div>
+    </div>
+  </div>
+
+  <div class="key-diff">
+    <strong>Thay đổi lớn nhất với user:</strong> Thay vì chọn "pose Milo nào", user chỉ cần <strong>mô tả hành động trong kịch bản bằng tiếng Việt tự nhiên</strong> → AI hiểu và gen đúng. Không còn giới hạn bởi 10 pose sẵn có. Milo trong cảnh "cầm viên vitamin to" sẽ thật sự cầm viên vitamin.
+  </div>
+</div>
+
+</body>
+</html>

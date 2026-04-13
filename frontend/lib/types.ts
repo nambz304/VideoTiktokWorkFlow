@@ -43,6 +43,7 @@ export interface MiloImage {
   filename: string;
   tags: string[];
   path: string;
+  url: string;
 }
 
 export interface ChatMessage {

@@ -26,11 +26,11 @@ def _get_trend_fetcher():
 
 
 def _get_script_gen():
-    return ScriptGenerator(api_key=os.getenv("GEMINI_API_KEY", ""))
+    return ScriptGenerator(api_key=os.getenv("ANTHROPIC_API_KEY", ""))
 
 
 def _get_scene_splitter():
-    return SceneSplitter(api_key=os.getenv("GEMINI_API_KEY", ""))
+    return SceneSplitter(api_key=os.getenv("ANTHROPIC_API_KEY", ""))
 
 
 def _get_asset_manager():
@@ -56,7 +56,7 @@ def _get_merger():
 
 
 def _get_caption_gen():
-    return CaptionGenerator(api_key=os.getenv("GEMINI_API_KEY", ""))
+    return CaptionGenerator(api_key=os.getenv("ANTHROPIC_API_KEY", ""))
 
 
 @router.post("/{session_id}/step/1a")
@@ -191,9 +191,9 @@ def step_5_merge(session_id: int, body: dict, db: DBSession = Depends(get_db)):
     )
     clip_paths = [s.video_path for s in scenes if s.video_path]
     bgm_path = body.get("bgm_path", "")
-    output_path = os.path.join(
+    output_path = os.path.abspath(os.path.join(
         os.getenv("OUTPUT_DIR", "../output"), "final", f"session_{session_id}_final.mp4"
-    )
+    ))
     merger = _get_merger()
     merger.merge(
         clip_paths=clip_paths,
@@ -201,11 +201,14 @@ def step_5_merge(session_id: int, body: dict, db: DBSession = Depends(get_db)):
         output_path=output_path,
         bgm_volume=body.get("bgm_volume", 0.15),
     )
-    cap_gen = _get_caption_gen()
-    script_combined = " ".join(s.script_text for s in scenes if s.script_text)
-    caption_data = cap_gen.generate(
-        script=script_combined, topic=session.topic or "", lang=session.lang
-    )
+    try:
+        cap_gen = _get_caption_gen()
+        script_combined = " ".join(s.script_text for s in scenes if s.script_text)
+        caption_data = cap_gen.generate(
+            script=script_combined, topic=session.topic or "", lang=session.lang
+        )
+    except Exception:
+        caption_data = {"caption": "", "hashtags": []}
     session.step = 5
     db.commit()
     return {
