@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from database import engine, Base
-from routers import sessions, pipeline, schedule, assets, chat
+from routers import sessions, pipeline, schedule, assets, chat, characters as characters_router
 from services.asset_manager import AssetManager
 import os
 
@@ -31,6 +31,7 @@ app.include_router(pipeline.router, prefix="/sessions", tags=["pipeline"])
 app.include_router(schedule.router, prefix="/schedule", tags=["schedule"])
 app.include_router(assets.router, prefix="/assets", tags=["assets"])
 app.include_router(chat.router, prefix="/chat", tags=["chat"])
+app.include_router(characters_router.router, prefix="/characters", tags=["characters"])
 
 app.mount("/static", StaticFiles(directory=os.getenv("ASSETS_DIR", "../assets")), name="static")
 
