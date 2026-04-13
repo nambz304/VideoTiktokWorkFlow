@@ -7,6 +7,7 @@ export interface Session {
   lang: string;
   step: number;
   status: SessionStatus;
+  character_id: number | null;
   created_at: string;
   updated_at: string | null;
 }

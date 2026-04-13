@@ -1,9 +1,10 @@
 "use client";
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import useSWR from "swr";
 import { getSession, updateSession } from "@/lib/api";
 import Stepper from "@/components/Stepper";
 import ChatSidebar from "@/components/ChatSidebar";
+import Step0Character from "@/components/steps/Step0Character";
 import Step1Trend from "@/components/steps/Step1Trend";
 import Step2Scenes from "@/components/steps/Step2Scenes";
 import Step3Images from "@/components/steps/Step3Images";
@@ -15,10 +16,25 @@ export default function StudioPage({ params }: { params: Promise<{ sessionId: st
   const { sessionId } = use(params);
   const id = parseInt(sessionId);
   const { data: session, mutate } = useSWR(`session-${id}`, () => getSession(id));
+  const [showCharPicker, setShowCharPicker] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (session && showCharPicker === null) {
+      setShowCharPicker(session.step === 1 && !session.character_id);
+    }
+  }, [session, showCharPicker]);
 
   async function goToStep(n: number) {
     await updateSession(id, { step: n });
     mutate();
+  }
+
+  async function handleCharacterAdvance(characterId?: number) {
+    if (characterId !== undefined) {
+      await updateSession(id, { character_id: characterId });
+      mutate();
+    }
+    setShowCharPicker(false);
   }
 
   if (!session) return (
@@ -36,6 +52,10 @@ export default function StudioPage({ params }: { params: Promise<{ sessionId: st
     6: <Step6Publish session={session} onBack={() => goToStep(5)} />,
   };
 
+  const activeContent = showCharPicker
+    ? <Step0Character session={session} onAdvance={handleCharacterAdvance} />
+    : (stepComponents[session.step] ?? <div className="p-6 text-gray-500">Unknown step</div>);
+
   return (
     <div className="h-screen flex flex-col bg-gray-950 overflow-hidden">
       <div className="flex-shrink-0">
@@ -43,12 +63,15 @@ export default function StudioPage({ params }: { params: Promise<{ sessionId: st
           <a href="/sessions" className="text-xs text-gray-500 hover:text-gray-300">← Sessions</a>
           <span className="text-xs text-gray-700">/</span>
           <span className="text-xs text-gray-300 font-medium">{session.title}</span>
+          {session.character_id && (
+            <span className="text-xs text-indigo-400 ml-auto">🤖 Nhân vật #{session.character_id}</span>
+          )}
         </div>
         <Stepper currentStep={session.step} />
       </div>
       <div className="flex flex-1 overflow-hidden">
         <div className="flex-1 overflow-hidden flex flex-col">
-          {stepComponents[session.step] ?? <div className="p-6 text-gray-500">Unknown step</div>}
+          {activeContent}
         </div>
         <ChatSidebar sessionId={id} step={session.step} />
       </div>

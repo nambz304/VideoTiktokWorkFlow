@@ -88,6 +88,10 @@ export const updateSchedule = (id: number, data: Partial<import("./types").Sched
     body: JSON.stringify(data),
   });
 
+// Characters
+export const listCharacters = () =>
+  req<{ characters: import("./types").Character[] }>("/characters/");
+
 // Chat
 export const sendChat = (sessionId: number, message: string, step: number) =>
   req<{ reply: string }>("/chat", {

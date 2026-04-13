@@ -32,6 +32,12 @@ export default function SessionsPage() {
           </div>
           <div className="flex gap-3">
             <button
+              onClick={() => router.push("/characters")}
+              className="px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-gray-300 text-sm hover:bg-gray-700 transition-all"
+            >
+              🎭 Nhân vật
+            </button>
+            <button
               onClick={() => router.push("/schedule")}
               className="px-4 py-2 rounded-lg border border-gray-700 bg-gray-800 text-gray-300 text-sm hover:bg-gray-700 transition-all"
             >

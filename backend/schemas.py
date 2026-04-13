@@ -11,6 +11,7 @@ class SessionUpdate(BaseModel):
     topic: Optional[str] = None
     step: Optional[int] = Field(None, ge=1, le=6)
     status: Optional[Literal["draft", "in_progress", "scheduled", "published"]] = None
+    character_id: Optional[int] = None
 
 class SessionOut(BaseModel):
     id: int
@@ -19,6 +20,7 @@ class SessionOut(BaseModel):
     lang: str
     step: int
     status: str
+    character_id: Optional[int] = None
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     model_config = {"from_attributes": True}

@@ -181,9 +181,13 @@ def step_3_images(session_id: int, db: DBSession = Depends(get_db)):
                 # Upload ref images if not done yet
                 ref_paths = json.loads(character.ref_image_paths or "[]")
                 if ref_paths:
-                    fal_urls = [kontext.upload_ref_image(p) for p in ref_paths]
-                    character.fal_image_urls = json.dumps(fal_urls)
-                    db.commit()
+                    try:
+                        fal_urls = [kontext.upload_ref_image(p) for p in ref_paths]
+                        character.fal_image_urls = json.dumps(fal_urls)
+                        db.commit()
+                    except Exception as upload_err:
+                        logger.warning(f"fal.ai upload failed, falling back to sprites: {upload_err}")
+                        fal_urls = []
 
             if fal_urls:
                 prompt = mgr.build_kontext_prompt(

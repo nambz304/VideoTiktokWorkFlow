@@ -13,13 +13,18 @@ export default function Step1Trend({ session, onAdvance }: { session: Session; o
   const [scripts, setScripts] = useState<string[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [trendError, setTrendError] = useState<string | null>(null);
 
   async function loadTrends() {
     setLoading(true);
+    setTrendError(null);
     try {
       const data = await fetchTrends(session.id);
       setTrends(data);
       setSubStep("trends");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setTrendError(msg.includes("429") ? "Google Trends giới hạn request (429). Hãy nhập chủ đề thủ công." : `Lỗi: ${msg}`);
     } finally {
       setLoading(false);
     }
@@ -64,10 +69,24 @@ export default function Step1Trend({ session, onAdvance }: { session: Session; o
           <div>
             <p className="text-sm text-gray-400 mb-4">Fetch trends đang hot về sức khoẻ + AI.</p>
             {trends.length === 0 ? (
-              <button onClick={loadTrends} disabled={loading}
-                className="px-4 py-2 bg-blue-700 rounded-lg text-sm text-white disabled:opacity-50">
-                {loading ? "Đang tìm..." : "🔍 Fetch trends"}
-              </button>
+              <div className="space-y-3">
+                <button onClick={loadTrends} disabled={loading}
+                  className="px-4 py-2 bg-blue-700 rounded-lg text-sm text-white disabled:opacity-50">
+                  {loading ? "Đang tìm..." : "🔍 Fetch trends"}
+                </button>
+                {trendError && (
+                  <div className="text-xs text-amber-400 bg-amber-900/20 border border-amber-800 rounded-lg px-4 py-3">
+                    {trendError}
+                  </div>
+                )}
+                <button onClick={() => setSubStep("topic")}
+                  className={`px-4 py-2 border rounded-lg text-sm transition-all
+                    ${trendError
+                      ? "border-blue-600 text-blue-300 bg-blue-900/20 hover:bg-blue-900/40"
+                      : "border-gray-700 text-gray-400 hover:bg-gray-800"}`}>
+                  ✏️ Tự nhập chủ đề →
+                </button>
+              </div>
             ) : (
               <div className="space-y-2">
                 {trends.map((t, i) => (
