@@ -1,45 +1,80 @@
 import anthropic
-import json, re
-from typing import List
+import json
+import re
 import logging
+from typing import List
 
 logger = logging.getLogger(__name__)
 
-VALID_EMOTIONS = {"happy","wave","question","explain","recommend","cta","sleep","eat","exercise","surprise","think","point"}
+VALID_EMOTIONS = {
+    "happy", "wave", "question", "explain", "recommend",
+    "cta", "sleep", "eat", "exercise", "surprise", "think", "point"
+}
+
+VALID_ACTS = {"hook", "main", "cta"}
+
 
 class SceneSplitter:
     def __init__(self, api_key: str):
         self._client = anthropic.Anthropic(api_key=api_key)
 
     def split(self, script: str, lang: str = "vi") -> List[dict]:
-        prompt = f"""Split this TikTok script into 3-8 scenes. Each scene is one visual moment.
-For each scene, assign ONE emotion tag from: {', '.join(sorted(VALID_EMOTIONS))}
+        prompt = f"""Bạn là chuyên gia phân tích kịch bản TikTok. Phân tích kịch bản sau thành 3-6 phân cảnh.
 
-Return ONLY a JSON array, no explanation:
-[{{"order": 1, "text": "scene text", "emotion": "tag"}}, ...]
+Quy tắc phân act:
+- Cảnh đầu tiên: act = "hook" (gây chú ý, mở đầu)
+- Các cảnh giữa: act = "main" (nội dung chính)
+- Cảnh cuối (1-2 cảnh): act = "cta" (kêu gọi hành động, follow)
 
-Script:
+Với mỗi cảnh, extract:
+- action: mô tả hành động, cử chỉ, biểu cảm của nhân vật (dùng làm prompt gen ảnh)
+- dialogue: CHÍNH XÁC lời nhân vật nói (text trong ngoặc kép hoặc sau dấu ':') — dùng cho TTS đọc
+- emotion: 1 trong {', '.join(sorted(VALID_EMOTIONS))}
+
+Nếu không có lời thoại rõ ràng, dialogue = action text.
+
+Trả về CHỈ JSON array, không giải thích:
+[{{"order": 1, "act": "hook", "action": "...", "dialogue": "...", "emotion": "..."}}]
+
+Kịch bản:
 {script}"""
+
         try:
             response = self._client.messages.create(
-                model="claude-haiku-4-5-20251001",
-                max_tokens=1024,
+                model="claude-sonnet-4-6",
+                max_tokens=2048,
                 messages=[{"role": "user", "content": prompt}],
             )
-            return self._parse_scenes(response.content[0].text)
+            return self._parse_scenes(response.content[0].text, script)
         except Exception as e:
-            logger.error(f"Claude scene split failed: {e}")
+            logger.error(f"SceneSplitter failed: {e}")
             raise
 
-    def _parse_scenes(self, raw: str) -> List[dict]:
+    def _parse_scenes(self, raw: str, original_script: str) -> List[dict]:
         match = re.search(r'\[.*\]', raw, re.DOTALL)
         if not match:
-            return [{"order": 1, "text": raw.strip(), "emotion": "explain"}]
+            return [self._fallback_scene(original_script)]
         try:
             scenes = json.loads(match.group())
-            for scene in scenes:
-                if scene.get("emotion") not in VALID_EMOTIONS:
-                    scene["emotion"] = "explain"
-            return scenes
+            return [self._validate_scene(s) for s in scenes]
         except json.JSONDecodeError:
-            return [{"order": 1, "text": raw.strip(), "emotion": "explain"}]
+            return [self._fallback_scene(original_script)]
+
+    def _validate_scene(self, scene: dict) -> dict:
+        if scene.get("emotion") not in VALID_EMOTIONS:
+            scene["emotion"] = "explain"
+        if scene.get("act") not in VALID_ACTS:
+            scene["act"] = "main"
+        # Fallback: dialogue → action if null/empty
+        if not scene.get("dialogue"):
+            scene["dialogue"] = scene.get("action", "")
+        return scene
+
+    def _fallback_scene(self, script: str) -> dict:
+        return {
+            "order": 1,
+            "act": "hook",
+            "action": script.strip()[:200],
+            "dialogue": script.strip()[:200],
+            "emotion": "explain",
+        }
