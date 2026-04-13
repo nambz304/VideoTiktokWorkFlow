@@ -38,11 +38,14 @@ export const fetchTrends = (sessionId: number) =>
 export const generateScripts = (sessionId: number) =>
   req<{ scripts: string[] }>(`/sessions/${sessionId}/step/1c`, { method: "POST" });
 
-export const splitScenes = (sessionId: number, script: string) =>
-  req<{ scenes: import("./types").Scene[] }>(`/sessions/${sessionId}/step/2`, {
+export const splitScenes = (sessionId: number, script: string, characterId?: number) => {
+  const body: Record<string, unknown> = { script };
+  if (characterId !== undefined) body.character_id = characterId;
+  return req<{ scenes: import("./types").Scene[] }>(`/sessions/${sessionId}/step/2`, {
     method: "POST",
-    body: JSON.stringify({ script }),
+    body: JSON.stringify(body),
   });
+};
 
 export const assignImages = (sessionId: number) =>
   req<{ scenes: import("./types").Scene[] }>(`/sessions/${sessionId}/step/3`, { method: "POST" });
