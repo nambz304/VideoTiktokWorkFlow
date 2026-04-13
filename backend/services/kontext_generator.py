@@ -13,7 +13,8 @@ class KontextGenerator:
     def __init__(self, fal_key: str, output_dir: str):
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
-        os.environ["FAL_KEY"] = fal_key
+        if fal_key:
+            os.environ["FAL_KEY"] = fal_key
 
     def upload_ref_image(self, local_path: str) -> str:
         """Upload ref image to fal.ai storage, return URL."""

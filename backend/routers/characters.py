@@ -54,7 +54,8 @@ async def create_character(
     # Save ref images
     saved_paths = []
     for upload in files[:3]:   # max 3 images
-        tmp_path = f"/tmp/char_{char.id}_{upload.filename}"
+        safe_name = os.path.basename(upload.filename or "upload")
+        tmp_path = f"/tmp/char_{char.id}_{safe_name}"
         with open(tmp_path, "wb") as f:
             content = await upload.read()
             f.write(content)
@@ -73,6 +74,13 @@ async def create_character(
             char.fal_image_urls = json.dumps([])
 
         db.commit()
+
+        # After save_ref_images and fal upload, clean up tmp files
+        for tmp in saved_paths:
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass
 
     return _serialize(char)
 
