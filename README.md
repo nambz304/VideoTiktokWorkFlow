@@ -8,9 +8,20 @@ Built for solo creators who want to ship content fast without touching a video e
 
 ## Demo
 
-<!-- Add demo video here -->
 <p align="center">
-  <img src="demo.gif" alt="Tiktok Studio demo" width="600" />
+  <img src="docs/screenshots/1.png" width="32%" />
+  <img src="docs/screenshots/2.png" width="32%" />
+  <img src="docs/screenshots/3.png" width="32%" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/4.png" width="32%" />
+  <img src="docs/screenshots/5.png" width="32%" />
+  <img src="docs/screenshots/6.png" width="32%" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/7.png" width="32%" />
+  <img src="docs/screenshots/8.png" width="32%" />
+  <img src="docs/screenshots/9.png" width="32%" />
 </p>
 
 ---
@@ -18,7 +29,7 @@ Built for solo creators who want to ship content fast without touching a video e
 ## What it does
 
 ```
-Topic → Trending script → Scene breakdown → AI images (fal.ai) → TTS voiceover → Per-scene video → Final merged video → Caption + hashtags → Scheduled post
+Topic → Trending script → Scene breakdown → AI images → TTS voiceover → Per-scene video → Final merged video → Caption + hashtags → Scheduled post
 ```
 
 Each step is controlled through a browser UI. You can re-generate any scene image or video clip individually until it looks right, then merge the whole thing with one click.
