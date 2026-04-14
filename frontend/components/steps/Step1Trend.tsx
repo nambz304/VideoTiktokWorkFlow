@@ -135,17 +135,26 @@ export default function Step1Trend({ session, onAdvance }: { session: Session; o
         {/* 1C: SCRIPT SELECT */}
         {subStep === "scripts" && (
           <div>
-            <p className="text-sm text-gray-400 mb-4">Chọn 1 kịch bản để tiếp tục. Có thể chỉnh sửa trực tiếp.</p>
-            <div className="space-y-3">
-              {scripts.map((script, i) => (
-                <div key={i} onClick={() => setSelected(i)}
-                  className={`bg-gray-900 border rounded-xl p-4 cursor-pointer transition-all
-                    ${selected === i ? "border-blue-500" : "border-gray-800 hover:border-gray-600"}`}>
-                  <div className="text-xs text-gray-500 font-semibold mb-2">Kịch bản {i + 1}</div>
-                  <pre className="text-xs text-gray-300 whitespace-pre-wrap font-sans leading-relaxed">{script}</pre>
+            {loading ? (
+              <div className="flex items-center gap-3 text-sm text-gray-400 py-6">
+                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                Đang tạo các kịch bản mẫu...
+              </div>
+            ) : (
+              <>
+                <p className="text-sm text-gray-400 mb-4">Chọn 1 kịch bản để tiếp tục. Có thể chỉnh sửa trực tiếp.</p>
+                <div className="space-y-3">
+                  {scripts.map((script, i) => (
+                    <div key={i} onClick={() => setSelected(i)}
+                      className={`bg-gray-900 border rounded-xl p-4 cursor-pointer transition-all
+                        ${selected === i ? "border-blue-500" : "border-gray-800 hover:border-gray-600"}`}>
+                      <div className="text-xs text-gray-500 font-semibold mb-2">Kịch bản {i + 1}</div>
+                      <pre className="text-xs text-gray-300 whitespace-pre-wrap font-sans leading-relaxed">{script}</pre>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
         )}
       </div>
