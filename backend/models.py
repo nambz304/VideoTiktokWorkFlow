@@ -13,6 +13,7 @@ class SessionModel(Base):
     step = Column(Integer, default=1)
     status = Column(String(20), default="draft")
     character_id = Column(Integer, nullable=True)  # soft ref to characters.id
+    script = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

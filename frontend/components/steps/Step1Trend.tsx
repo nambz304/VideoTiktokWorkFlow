@@ -44,7 +44,7 @@ export default function Step1Trend({ session, onAdvance }: { session: Session; o
 
   async function confirmScript() {
     if (selected === null) return;
-    await updateSession(session.id, { topic, status: "in_progress" });
+    await updateSession(session.id, { topic, status: "in_progress", script: scripts[selected] });
     onAdvance();
   }
 

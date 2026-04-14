@@ -9,6 +9,7 @@ class SessionCreate(BaseModel):
 class SessionUpdate(BaseModel):
     title: Optional[str] = None
     topic: Optional[str] = None
+    script: Optional[str] = None
     step: Optional[int] = Field(None, ge=1, le=6)
     status: Optional[Literal["draft", "in_progress", "scheduled", "published"]] = None
     character_id: Optional[int] = None
@@ -17,6 +18,7 @@ class SessionOut(BaseModel):
     id: int
     title: str
     topic: Optional[str]
+    script: Optional[str] = None
     lang: str
     step: int
     status: str

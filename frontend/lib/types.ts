@@ -4,6 +4,7 @@ export interface Session {
   id: number;
   title: string;
   topic: string | null;
+  script: string | null;
   lang: string;
   step: number;
   status: SessionStatus;

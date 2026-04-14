@@ -10,7 +10,7 @@ export default function Step2Scenes({
 }: { session: Session; onAdvance: () => void; onBack: () => void }) {
   const [scenes, setScenes] = useState<Scene[]>([]);
   const [loading, setLoading] = useState(false);
-  const [scriptInput, setScriptInput] = useState("");
+  const [scriptInput, setScriptInput] = useState(session.script ?? "");
   const [generated, setGenerated] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
 
