@@ -9,19 +9,19 @@ Built for solo creators who want to ship content fast without touching a video e
 ## Demo
 
 <p align="center">
-  <img src="docs/screenshots/1.png" width="32%" />
-  <img src="docs/screenshots/2.png" width="32%" />
-  <img src="docs/screenshots/3.png" width="32%" />
+  <img src="docs/screenshots/1.jpg" width="32%" />
+  <img src="docs/screenshots/2.jpg" width="32%" />
+  <img src="docs/screenshots/3.jpg" width="32%" />
 </p>
 <p align="center">
-  <img src="docs/screenshots/4.png" width="32%" />
-  <img src="docs/screenshots/5.png" width="32%" />
-  <img src="docs/screenshots/6.png" width="32%" />
+  <img src="docs/screenshots/4.jpg" width="32%" />
+  <img src="docs/screenshots/5.jpg" width="32%" />
+  <img src="docs/screenshots/6.jpg" width="32%" />
 </p>
 <p align="center">
-  <img src="docs/screenshots/7.png" width="32%" />
-  <img src="docs/screenshots/8.png" width="32%" />
-  <img src="docs/screenshots/9.png" width="32%" />
+  <img src="docs/screenshots/7.jpg" width="32%" />
+  <img src="docs/screenshots/8.jpg" width="32%" />
+  <img src="docs/screenshots/9.jpg" width="32%" />
 </p>
 
 ---
