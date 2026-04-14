@@ -14,6 +14,9 @@ load_dotenv()
 async def lifespan(app: FastAPI):
     app.state.asset_manager = AssetManager(os.getenv("ASSETS_DIR", "../assets"))
     Base.metadata.create_all(bind=engine)
+    output_dir = os.getenv("OUTPUT_DIR", "../output")
+    for sub in ("audio", "scenes", "images", "final"):
+        os.makedirs(os.path.join(output_dir, sub), exist_ok=True)
     yield
 
 app = FastAPI(title="Milo Studio API", version="1.0.0", lifespan=lifespan)
@@ -34,6 +37,7 @@ app.include_router(chat.router, prefix="/chat", tags=["chat"])
 app.include_router(characters_router.router, prefix="/characters", tags=["characters"])
 
 app.mount("/static", StaticFiles(directory=os.getenv("ASSETS_DIR", "../assets")), name="static")
+app.mount("/output", StaticFiles(directory=os.getenv("OUTPUT_DIR", "../output")), name="output")
 
 @app.get("/health")
 def health():

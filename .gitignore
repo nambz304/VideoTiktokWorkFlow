@@ -10,3 +10,7 @@ node_modules/
 /*/docs
 .worktrees/
 .superpowers/
+.gstack/
+CONTEXT.*
+/docs
+/.superpowers

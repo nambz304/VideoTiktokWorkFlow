@@ -38,17 +38,13 @@ class KontextGenerator:
 
         arguments = {
             "prompt": prompt,
-            "image_url": ref_image_urls[0],   # Kontext takes the main ref image
-            "image_size": {"width": 1080, "height": 1920},
+            "image_url": ref_image_urls[0],
+            "aspect_ratio": "9:16",
             "num_inference_steps": 28,
             "guidance_scale": 3.5,
             "seed": seed,
             "output_format": "png",
         }
-
-        # If multiple ref images, add extras to prompt context
-        if len(ref_image_urls) > 1:
-            arguments["extra_image_urls"] = ref_image_urls[1:]
 
         logger.info(f"Calling Kontext: {KONTEXT_MODEL} | prompt: {prompt[:80]}...")
 

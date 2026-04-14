@@ -63,9 +63,9 @@ export default function SessionCard({ session, onDeleted }: SessionCardProps) {
         </div>
         <button
           onClick={handleDelete}
-          className="text-gray-700 hover:text-red-400 text-xs opacity-0 group-hover:opacity-100 transition-all"
+          className="text-gray-600 hover:text-red-400 text-xs transition-colors"
         >
-          xoá
+          🗑 Xoá
         </button>
       </div>
 

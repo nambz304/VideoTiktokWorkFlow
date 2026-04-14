@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session as DBSession
 from database import get_db
 from models import SessionModel, SceneModel, Character
@@ -149,19 +150,48 @@ def step_2_scenes(session_id: int, body: dict, db: DBSession = Depends(get_db)):
 
 
 @router.post("/{session_id}/step/3")
-def step_3_images(session_id: int, db: DBSession = Depends(get_db)):
+def step_3_advance(session_id: int, db: DBSession = Depends(get_db)):
+    """Advance session to step 3. Images are generated per-scene via /scenes/{scene_id}/image."""
     session = db.query(SessionModel).filter(SessionModel.id == session_id).first()
     if not session:
         raise HTTPException(404, "Session not found")
-
+    session.step = 3
+    db.commit()
     scenes = (
         db.query(SceneModel)
         .filter(SceneModel.session_id == session_id)
         .order_by(SceneModel.order)
         .all()
     )
+    return {
+        "scenes": [
+            {
+                "id": s.id,
+                "order": s.order,
+                "script_text": s.script_text,
+                "emotion_tag": s.emotion_tag,
+                "image_path": s.image_path,
+                "act": s.act,
+                "action": s.action,
+                "dialogue": s.dialogue,
+            }
+            for s in scenes
+        ]
+    }
 
-    # Get character — if none, use fallback AssetManager
+
+@router.post("/{session_id}/scenes/{scene_id}/image")
+def generate_scene_image(session_id: int, scene_id: int, db: DBSession = Depends(get_db)):
+    """Generate (or regenerate) image for a single scene via FLUX Kontext."""
+    scene = (
+        db.query(SceneModel)
+        .filter(SceneModel.id == scene_id, SceneModel.session_id == session_id)
+        .first()
+    )
+    if not scene:
+        raise HTTPException(404, "Scene not found")
+    session = db.query(SessionModel).filter(SessionModel.id == session_id).first()
+
     character = None
     if session.character_id:
         character = db.query(Character).filter(Character.id == session.character_id).first()
@@ -169,60 +199,48 @@ def step_3_images(session_id: int, db: DBSession = Depends(get_db)):
     mgr = _get_char_manager()
     kontext = _get_kontext_gen()
 
-    # Fixed seed per session for visual consistency
-    seed = session.id * 1000 % 1000000
-
-    updated = []
-    for scene in scenes:
-        if character:
-            # FLUX Kontext path
-            fal_urls = mgr.get_fal_urls(character)
-            if not fal_urls:
-                # Upload ref images if not done yet
-                ref_paths = json.loads(character.ref_image_paths or "[]")
-                if ref_paths:
-                    try:
-                        fal_urls = [kontext.upload_ref_image(p) for p in ref_paths]
-                        character.fal_image_urls = json.dumps(fal_urls)
-                        db.commit()
-                    except Exception as upload_err:
-                        logger.warning(f"fal.ai upload failed, falling back to sprites: {upload_err}")
-                        fal_urls = []
-
-            if fal_urls:
-                prompt = mgr.build_kontext_prompt(
-                    character,
-                    scene.action or scene.script_text,
-                    scene.act or "main",
-                )
-                filename = f"session_{session_id}_scene_{scene.id}.png"
+    if character:
+        fal_urls = mgr.get_fal_urls(character)
+        if not fal_urls:
+            ref_paths = json.loads(character.ref_image_paths or "[]")
+            if ref_paths:
                 try:
-                    image_path = kontext.generate(
-                        prompt=prompt,
-                        ref_image_urls=fal_urls,
-                        output_filename=filename,
-                        seed=seed + scene.order,
-                    )
-                    scene.image_path = image_path
-                except Exception as e:
-                    logger.error(f"Kontext failed for scene {scene.id}: {e}")
-                    _fallback_asset(scene)
-            else:
-                _fallback_asset(scene)
+                    fal_urls = [kontext.upload_ref_image(p) for p in ref_paths]
+                    character.fal_image_urls = json.dumps(fal_urls)
+                    db.commit()
+                except Exception as upload_err:
+                    logger.warning(f"fal.ai upload failed: {upload_err}")
+                    fal_urls = []
+
+        if fal_urls:
+            prompt = mgr.build_kontext_prompt(
+                character,
+                scene.action or scene.script_text,
+                scene.act or "main",
+            )
+            filename = f"session_{session_id}_scene_{scene_id}.png"
+            import time
+            seed = int(time.time()) % 1000000
+            try:
+                image_path = kontext.generate(
+                    prompt=prompt,
+                    ref_image_urls=fal_urls,
+                    output_filename=filename,
+                    seed=seed,
+                )
+                scene.image_path = image_path
+                db.commit()
+                return {"scene_id": scene_id, "image_path": image_path}
+            except Exception as e:
+                logger.error(f"Kontext failed for scene {scene_id}: {e}")
+                raise HTTPException(500, f"Image generation failed: {e}")
         else:
-            # No character → use sprite PNG fallback
-            _fallback_asset(scene)
-
-        updated.append({
-            "id": scene.id,
-            "image_path": scene.image_path,
-            "act": scene.act,
-            "emotion_tag": scene.emotion_tag,
-        })
-
-    session.step = 3
-    db.commit()
-    return {"scenes": updated}
+            raise HTTPException(400, "Nhân vật chưa có ref image hoặc upload fal.ai thất bại")
+    else:
+        # No character — fallback to sprite
+        _fallback_asset(scene)
+        db.commit()
+        return {"scene_id": scene_id, "image_path": scene.image_path}
 
 
 def _fallback_asset(scene: SceneModel):
@@ -306,3 +324,15 @@ def step_5_merge(session_id: int, body: dict, db: DBSession = Depends(get_db)):
         "caption": caption_data["caption"],
         "hashtags": caption_data["hashtags"],
     }
+
+
+@router.get("/{session_id}/video")
+def download_video(session_id: int):
+    path = os.path.abspath(os.path.join(
+        os.getenv("OUTPUT_DIR", "../output"), "final",
+        f"session_{session_id}_final.mp4"
+    ))
+    if not os.path.exists(path):
+        raise HTTPException(404, "Video chưa được tạo")
+    return FileResponse(path, media_type="video/mp4",
+                        filename=f"milo_session_{session_id}.mp4")

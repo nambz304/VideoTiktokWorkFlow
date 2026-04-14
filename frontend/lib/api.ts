@@ -47,8 +47,11 @@ export const splitScenes = (sessionId: number, script: string, characterId?: num
   });
 };
 
-export const assignImages = (sessionId: number) =>
+export const advanceToStep3 = (sessionId: number) =>
   req<{ scenes: import("./types").Scene[] }>(`/sessions/${sessionId}/step/3`, { method: "POST" });
+
+export const genSceneImage = (sessionId: number, sceneId: number) =>
+  req<{ scene_id: number; image_path: string }>(`/sessions/${sessionId}/scenes/${sceneId}/image`, { method: "POST" });
 
 export const genSceneVideo = (sessionId: number, sceneId: number) =>
   req<{ scene_id: number; video_path: string }>(`/sessions/${sessionId}/step/4/${sceneId}`, { method: "POST" });

@@ -156,12 +156,7 @@ export default function Step1Trend({ session, onAdvance }: { session: Session; o
         onNext={subStep === "trends" && trends.length > 0 ? () => setSubStep("topic")
           : subStep === "topic" ? confirmTopic
           : confirmScript}
-        nextDisabled={
-          (subStep === "trends" && trends.length === 0) ||
-          (subStep === "topic" && !topic.trim()) ||
-          (subStep === "scripts" && selected === null) ||
-          loading
-        }
+        nextDisabled={loading}
         nextLabel={subStep === "scripts" ? "OK, qua Bước 2 →" : "Tiếp →"}
       />
     </div>

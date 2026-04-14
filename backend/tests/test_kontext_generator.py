@@ -62,8 +62,9 @@ def test_generate_uses_correct_model(gen):
 
     assert called_with["model"] == "fal-ai/flux-kontext/dev"
     assert called_with["args"]["seed"] == 99
-    assert called_with["args"]["image_size"]["width"] == 1080
-    assert called_with["args"]["image_size"]["height"] == 1920
+    assert called_with["args"]["aspect_ratio"] == "9:16"
+    assert "image_size" not in called_with["args"]
+    assert "extra_image_urls" not in called_with["args"]
 
 
 def test_upload_image_returns_url(gen, tmp_path):

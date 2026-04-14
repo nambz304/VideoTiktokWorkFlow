@@ -82,7 +82,7 @@ export default function Step2Scenes({
         step={2} totalSteps={6}
         onBack={onBack}
         onNext={onAdvance}
-        nextDisabled={scenes.length === 0}
+        nextDisabled={false}
       />
     </div>
   );

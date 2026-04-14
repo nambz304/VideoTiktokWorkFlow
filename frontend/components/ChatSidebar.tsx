@@ -10,7 +10,7 @@ interface ChatSidebarProps {
 
 export default function ChatSidebar({ sessionId, step }: ChatSidebarProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: "ai", text: "Xin chào! Tôi là Milo. Bạn cần hỗ trợ gì không?", timestamp: Date.now() },
+    { role: "ai", text: "Xin chào! Tôi là Moris. Bạn cần hỗ trợ gì không?", timestamp: Date.now() },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,7 +43,7 @@ export default function ChatSidebar({ sessionId, step }: ChatSidebarProps) {
     <div className="w-72 bg-gray-950 border-l border-gray-800 flex flex-col flex-shrink-0">
       <div className="px-4 py-3 border-b border-gray-800 flex items-center gap-2">
         <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="text-sm font-semibold text-emerald-400">Milo AI</span>
+        <span className="text-sm font-semibold text-emerald-400">Moris AI</span>
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">

@@ -1,7 +1,8 @@
 "use client";
 import { use, useState, useEffect } from "react";
 import useSWR from "swr";
-import { getSession, updateSession } from "@/lib/api";
+import { getSession, updateSession, deleteSession } from "@/lib/api";
+import { useRouter } from "next/navigation";
 import Stepper from "@/components/Stepper";
 import ChatSidebar from "@/components/ChatSidebar";
 import Step0Character from "@/components/steps/Step0Character";
@@ -13,10 +14,13 @@ import Step5Merge from "@/components/steps/Step5Merge";
 import Step6Publish from "@/components/steps/Step6Publish";
 
 export default function StudioPage({ params }: { params: Promise<{ sessionId: string }> }) {
+  const router = useRouter();
   const { sessionId } = use(params);
   const id = parseInt(sessionId);
   const { data: session, mutate } = useSWR(`session-${id}`, () => getSession(id));
   const [showCharPicker, setShowCharPicker] = useState<boolean | null>(null);
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState("");
 
   useEffect(() => {
     if (session && showCharPicker === null) {
@@ -27,6 +31,20 @@ export default function StudioPage({ params }: { params: Promise<{ sessionId: st
   async function goToStep(n: number) {
     await updateSession(id, { step: n });
     mutate();
+  }
+
+  async function handleDelete() {
+    if (!confirm(`Xoá video "${session?.title}"? Không thể hoàn tác.`)) return;
+    await deleteSession(id);
+    router.push("/sessions");
+  }
+
+  async function saveTitle() {
+    if (titleDraft.trim() && titleDraft.trim() !== session?.title) {
+      await updateSession(id, { title: titleDraft.trim() });
+      mutate();
+    }
+    setEditingTitle(false);
   }
 
   async function handleCharacterAdvance(characterId?: number) {
@@ -62,10 +80,36 @@ export default function StudioPage({ params }: { params: Promise<{ sessionId: st
         <div className="px-6 py-2 bg-gray-900 border-b border-gray-800 flex items-center gap-3">
           <a href="/sessions" className="text-xs text-gray-500 hover:text-gray-300">← Sessions</a>
           <span className="text-xs text-gray-700">/</span>
-          <span className="text-xs text-gray-300 font-medium">{session.title}</span>
-          {session.character_id && (
-            <span className="text-xs text-indigo-400 ml-auto">🤖 Nhân vật #{session.character_id}</span>
+          {editingTitle ? (
+            <input
+              autoFocus
+              value={titleDraft}
+              onChange={(e) => setTitleDraft(e.target.value)}
+              onBlur={saveTitle}
+              onKeyDown={(e) => { if (e.key === "Enter") saveTitle(); if (e.key === "Escape") setEditingTitle(false); }}
+              className="text-xs bg-gray-800 border border-blue-500 rounded px-2 py-0.5 text-gray-100 outline-none w-64"
+            />
+          ) : (
+            <button
+              onClick={() => { setTitleDraft(session.title); setEditingTitle(true); }}
+              className="text-xs text-gray-300 font-medium hover:text-white hover:underline decoration-dotted underline-offset-2"
+              title="Nhấp để đổi tên"
+            >
+              {session.title}
+            </button>
           )}
+          <div className="ml-auto flex items-center gap-3">
+            {session.character_id && (
+              <span className="text-xs text-indigo-400">🤖 Nhân vật #{session.character_id}</span>
+            )}
+            <button
+              onClick={handleDelete}
+              className="text-xs text-gray-600 hover:text-red-400 transition-colors"
+              title="Xoá video này"
+            >
+              🗑 Xoá
+            </button>
+          </div>
         </div>
         <Stepper currentStep={session.step} />
       </div>
