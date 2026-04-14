@@ -1,15 +1,24 @@
-# Milo Studio
+# Tiktok Studio
 
-AI-powered TikTok video factory. Give it a topic, it handles everything: trend research, script writing, scene images, voiceover, and final video assembly.
+AI-powered TikTok video factory. Give it a topic, it handles everything: trend research, script writing, scene images, voiceover, video assembly, and scheduling.
 
 Built for solo creators who want to ship content fast without touching a video editor.
+
+---
+
+## Demo
+
+<!-- Add demo video here -->
+<p align="center">
+  <img src="demo.gif" alt="Tiktok Studio demo" width="600" />
+</p>
 
 ---
 
 ## What it does
 
 ```
-Topic → Trending script → Scene breakdown → AI images (fal.ai) → TTS voiceover → Per-scene video → Final merged video → Caption + hashtags
+Topic → Trending script → Scene breakdown → AI images (fal.ai) → TTS voiceover → Per-scene video → Final merged video → Caption + hashtags → Scheduled post
 ```
 
 Each step is controlled through a browser UI. You can re-generate any scene image or video clip individually until it looks right, then merge the whole thing with one click.
@@ -72,7 +81,7 @@ ANTHROPIC_API_KEY=sk-ant-...
 FAL_KEY=...
 REDDIT_CLIENT_ID=...
 REDDIT_CLIENT_SECRET=...
-REDDIT_USER_AGENT=MiloStudio/1.0
+REDDIT_USER_AGENT=TiktokStudio/1.0
 ```
 
 **3. Run**
@@ -105,7 +114,15 @@ Open [http://localhost:3000](http://localhost:3000).
 | 3 | Generate a 9:16 image for each scene via fal.ai (re-generate until it looks right) |
 | 4 | Generate TTS audio + assemble each scene into a video clip |
 | 5 | Merge all clips, add background music, generate caption and hashtags |
-| 6 | Schedule or publish |
+| 6 | Schedule or publish to TikTok |
+
+---
+
+## Scheduling
+
+Step 6 lets you schedule a video for a specific date and time before publishing.
+
+The scheduler page (`/schedule`) shows all upcoming and past scheduled posts in a calendar view. Scheduled videos stay in draft until their publish time, so you can queue up a week of content in one session.
 
 ---
 
